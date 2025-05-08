@@ -34,23 +34,15 @@ app.post('/llm-agent', async (req, res) => {
   const { prompt } = req.body;
   if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
 
-  // Strict system prompt for code-only output with result feedback
-  const systemPrompt = [
-    "You are an expert Blender Python assistant.",
-    "Given a user request, generate ONLY the Blender Python code that accomplishes the task.",
-    "The code MUST be valid, properly indented Python, and ready to run in Blender.",
-    "Do NOT use any markdown (like ```python or ```).",
-    "IMPORTANT: Always include print statements at the end of your code to confirm what was changed or created.",
-    "For example, if you move an object, include: print(f'Moved {obj.name} to {obj.location}')",
-    "If you change a material, include: print(f'Changed material color to {material.diffuse_color}')",
-    "Include useful comments in your code to explain what it does.",
-    "Do NOT use any HTML entities (e.g., use a literal single quote ' instead of &#039; or &apos;).",
-    "Output only valid Blender Python code that can be run directly in the Blender scripting console.",
-    "If the request is not possible, return an empty string.",
-    "IMPORTANT: Prefer using the Blender data API (bpy.data, bpy.context, etc.) for object, mesh, or scene manipulation, especially for deleting, creating, or selecting objects. Avoid using bpy.ops for these operations unless absolutely necessary.",
-    "CRITICAL FOR DELETION: When deleting objects, NEVER use bpy.ops.object.delete(). Instead, use code like: objs = [obj for obj in bpy.data.objects if 'pattern' in obj.name]; for obj in objs: bpy.data.objects.remove(obj, do_unlink=True); print(f'Deleted {len(objs)} objects'). This approach works for multiple objects and doesn't require selection.",
-    "When working with multiple objects with similar names (like 'tube'), use a pattern match approach with a list comprehension to find all matching objects first, then operate on that list. Always print the count of affected objects."
-  ].join(' ');
+  // Use the comprehensive modular system prompt from blender-system-prompts.js
+  const blenderPrompts = require('./blender-system-prompts.js');
+  const systemPrompt = blenderPrompts.getComprehensiveSystemPrompt().join('\n');
+
+  // Check for missing API key
+  if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.startsWith('sk-or-v1-') && OPENROUTER_API_KEY.length < 40) {
+    console.error('--- Missing or invalid OpenRouter API key ---');
+    return res.status(500).json({ error: 'Missing or invalid OpenRouter API key' });
+  }
 
   const messages = [
     { role: 'system', content: systemPrompt },
@@ -68,7 +60,7 @@ app.post('/llm-agent', async (req, res) => {
       body: JSON.stringify({
         model: 'openai/gpt-4o',
         messages,
-        max_tokens: 512,
+        max_tokens: 2048,
         temperature: 0.2
       })
     });
