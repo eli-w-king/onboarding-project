@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenRouter Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .api-key-container {
+            background-color: #ffffff;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-key-container input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .model-selector {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 200px;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 85%;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+        .user {
+            background-color: #e1f5fe;
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+
+        .assistant {
+            background-color: #f0f0f0;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 20px 0;
+        }
+
+        .input-area textarea {
+            flex-grow: 1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+            height: 60px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0b7dda;
+        }
+
+        button:disabled {
+            background-color: #b0bec5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            text-align: center;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #2196f3;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            align-self: flex-start;
+            margin-top: 5px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: #666;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+
+        pre {
+            background-color: #2d2d2d; /* Darker background for code blocks */
+            color: #f8f8f2; /* Light text for contrast */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            white-space: pre-wrap; /* Wrap long lines */
+            word-wrap: break-word; /* Break long words */
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em; /* Slightly smaller for inline code */
+            background-color: #e0e0e0; /* Light grey for inline code */
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        /* For code within pre blocks, ensure it inherits pre's color */
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: inherit; 
+        }
+
+
+        .error {
+            color: #d32f2f;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="api-key-container">
+        <label for="backend-selector" style="font-weight:bold;">Backend:</label>
+        <select id="backend-selector" class="model-selector">
+            <option value="openrouter">OpenRouter API</option>
+            <option value="blender-mcp">Blender MCP</option>
+        </select>
+        <label for="api-key" id="api-key-label" style="font-weight:bold;">Perplexity API Key:</label>
+        <input type="password" id="api-key" value="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" placeholder="Enter your Perplexity API key..." />
+        <span id="api-key-hint" style="margin-left:10px;color:#2196f3;">(MCP agent will use this key for LLM+Blender tool calls)</span>
+    </div>
+
+    <div class="chat-container">
+        <div class="messages" id="messages">
+            <div class="message assistant">
+                Hello! I'm Perplexity. Enter your API key above and start chatting.
+            </div>
+        </div>
+        <div class="typing-indicator hidden" id="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="input-area">
+            <textarea id="user-input" placeholder="Type your message here or Blender Python code..." disabled></textarea>
+            <button id="send-button" disabled>Send</button>
+        </div>
+        <p class="status" id="status"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const apiKeyInput = document.getElementById('api-key');
+            const apiKeyLabel = document.getElementById('api-key-label');
+            const apiKeyHint = document.getElementById('api-key-hint');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const messagesContainer = document.getElementById('messages');
+            const typingIndicator = document.getElementById('typing-indicator');
+            const statusElement = document.getElementById('status');
+            const backendSelector = document.getElementById('backend-selector');
+            let modelSelector = document.getElementById('model-selector');
+            // If modelSelector doesn't exist, create it for OpenRouter
+            if (!modelSelector) {
+                modelSelector = document.createElement('select');
+                modelSelector.id = 'model-selector';
+                modelSelector.className = 'model-selector';
+                modelSelector.innerHTML = `<option value="openrouter/auto">OpenRouter (auto)</option><option value="perplexity/sonar-small-chat">Perplexity Sonar Small</option><option value="perplexity/sonar-medium-chat">Perplexity Sonar Medium</option>`;
+                apiKeyInput.parentNode.insertBefore(modelSelector, apiKeyInput.nextSibling);
+            }
+
+            let conversationHistory = [
+                { role: "system", content: "You are a helpful assistant." }
+            ];
+
+            function updateInputState() {
+                const backend = backendSelector.value;
+                if (backend === 'openrouter') {
+                    apiKeyInput.style.display = '';
+                    apiKeyLabel.style.display = '';
+                    apiKeyHint.style.display = '';
+                    modelSelector.style.display = '';
+                    const hasApiKey = apiKeyInput.value.trim() !== '';
+                    userInput.disabled = !hasApiKey;
+                    sendButton.disabled = !hasApiKey;
+                    statusElement.textContent = hasApiKey ? 'Ready to chat!' : 'Please enter your API key to start chatting.';
+                } else {
+                    apiKeyInput.style.display = 'none';
+                    apiKeyLabel.style.display = 'none';
+                    apiKeyHint.style.display = 'none';
+                    modelSelector.style.display = 'none';
+                    userInput.disabled = false;
+                    sendButton.disabled = false;
+                    statusElement.textContent = 'Ready to send Blender MCP commands!';
+                }
+            }
+
+            apiKeyInput.addEventListener('input', updateInputState);
+            backendSelector.addEventListener('change', updateInputState);
+            updateInputState(); // Initial check
+
+            async function sendMessage() {
+                const userMessageText = userInput.value.trim();
+                if (!userMessageText) return;
+                addMessageToUI('user', userMessageText);
+                userInput.value = '';
+                typingIndicator.classList.remove('hidden');
+                sendButton.disabled = true;
+                userInput.disabled = true;
+                const backend = backendSelector.value;
+                if (backend === 'openrouter') {
+                    conversationHistory.push({ role: "user", content: userMessageText });
+                    statusElement.textContent = 'MCP agent is thinking...';
+                    await fetchOpenRouterResponse();
+                } else {
+                    statusElement.textContent = 'Sending code to Blender MCP...';
+                    await fetchBlenderMCPResponse(userMessageText);
+                }
+            }
+
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+
+
+            async function fetchOpenRouterResponse() {
+                const apiKey = apiKeyInput.value.trim();
+                const selectedModel = modelSelector.value;
+                if (!apiKey) {
+                    statusElement.textContent = 'Error: API key is missing.';
+                    typingIndicator.classList.add('hidden');
+                    updateInputState();
+                    return;
+                }
+                try {
+                    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`,
+                            'HTTP-Referer': window.location.origin,
+                            'X-Title': 'Simple OpenRouter Chat UI'
+                        },
+                        body: JSON.stringify({
+                            model: selectedModel,
+                            messages: conversationHistory
+                        })
+                    });
+                    typingIndicator.classList.add('hidden');
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ error: { message: `HTTP error! status: ${response.status}` } }));
+                        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    let aiMessage = data.choices?.[0]?.message?.content || '[No response]';
+                    if (aiMessage) {
+                        addMessageToUI('assistant', aiMessage);
+                        conversationHistory.push({ role: "assistant", content: aiMessage });
+                        statusElement.textContent = 'Ready.';
+                    } else {
+                        throw new Error('No message content received from OpenRouter.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching OpenRouter response:', error);
+                    statusElement.innerHTML = `<span class="error">Error: ${escapeHtml(error.message)}`;
+                    addMessageToUI('assistant', `Sorry, I encountered an error: ${escapeHtml(error.message)}`);
+                } finally {
+                    sendButton.disabled = false;
+                    userInput.disabled = false;
+                    userInput.focus();
+                }
+            }
+
+            async function fetchBlenderMCPResponse(code) {
+                try {
+                    const response = await fetch('http://localhost:3001/blender-mcp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'execute_code', params: { code } })
+                    });
+                    typingIndicator.classList.add('hidden');
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ error: { message: `HTTP error! status: ${response.status}` } }));
+                        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    let result = data.result || data.message || '[No response]';
+                    // Pretty-print objects
+                    if (typeof result === 'object') {
+                        result = `<pre>${escapeHtml(JSON.stringify(result, null, 2))}</pre>`;
+                    }
+                    addMessageToUI('assistant', result);
+                    statusElement.textContent = 'Ready.';
+                } catch (error) {
+                    console.error('Error fetching Blender MCP response:', error);
+                    statusElement.innerHTML = `<span class="error">Error: ${escapeHtml(error.message)}`;
+                    addMessageToUI('assistant', `Sorry, I encountered an error: ${escapeHtml(error.message)}`);
+                } finally {
+                    sendButton.disabled = false;
+                    userInput.disabled = false;
+                    userInput.focus();
+                }
+            }
+            
+            function escapeHtml(unsafe) {
+                if (unsafe === undefined || unsafe === null) return '';
+                if (typeof unsafe !== 'string') unsafe = String(unsafe);
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            function formatMessageContent(content) {
+                // First, escape all HTML to prevent XSS
+                let escapedContent = escapeHtml(content);
+
+                // Then, process markdown-like code blocks
+                // Ensure this regex handles various language identifiers and newlines correctly
+                escapedContent = escapedContent.replace(/```([a-zA-Z0-9\+\-]*)\n?([\s\S]*?)```/g, 
+                    function(match, language, code) {
+                        // The code is already HTML-escaped, so it's safe to put in <pre><code>
+                        return `<pre><code class="language-${language || 'plaintext'}">${code.trim()}</code></pre>`;
+                    }
+                );
+                
+                // Process inline code
+                escapedContent = escapedContent.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+                // Finally, convert newlines to <br> for display, outside of <pre> blocks
+                // This is a bit tricky. A simpler approach for now:
+                // We'll rely on CSS `white-space: pre-wrap;` for messages and `pre` tags handle their newlines.
+                // If specific <br> conversion is needed, it would require more complex parsing
+                // to avoid adding <br> inside <pre> tags.
+                // For now, let's assume CSS handles general newlines in messages.
+                return escapedContent;
+            }
+
+            function addMessageToUI(role, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', role);
+                messageDiv.innerHTML = formatMessageContent(content); // Use the new formatting function
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            async function fetchAIResponse() {
+                const apiKey = apiKeyInput.value.trim();
+                const selectedModel = modelSelector.value;
+                if (!apiKey) {
+                    statusElement.textContent = 'Error: API key is missing.';
+                    typingIndicator.classList.add('hidden');
+                    updateInputState();
+                    return;
+                }
+                try {
+                    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`,
+                            'HTTP-Referer': window.location.origin,
+                            'X-Title': 'Simple OpenRouter Chat UI'
+                        },
+                        body: JSON.stringify({
+                            model: selectedModel,
+                            messages: conversationHistory
+                        })
+                    });
+                    typingIndicator.classList.add('hidden');
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ error: { message: `HTTP error! status: ${response.status}` } }));
+                        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    const aiMessage = data.choices[0]?.message?.content;
+                    if (aiMessage) {
+                        addMessageToUI('assistant', aiMessage);
+                        conversationHistory.push({ role: "assistant", content: aiMessage });
+                        statusElement.textContent = 'Ready.';
+                    } else {
+                        throw new Error('No message content received from AI.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching AI response:', error);
+                    statusElement.innerHTML = `<span class="error">Error: ${escapeHtml(error.message)}`;
+                    addMessageToUI('assistant', `Sorry, I encountered an error: ${escapeHtml(error.message)}`);
+                } finally {
+                    sendButton.disabled = false;
+                    userInput.disabled = false;
+                    userInput.focus();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
