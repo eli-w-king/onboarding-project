@@ -1,14 +1,18 @@
-// Simple Express backend bridge to communicate with Blender MCP
 const express = require('express');
 const bodyParser = require('body-parser');
 const net = require('net');
-
-const BLENDER_HOST = 'localhost';
-const BLENDER_PORT = 9876;
-
+const path = require('path');
 
 const app = express();
 const PORT = 3001; // The port your web frontend will call
+
+// Serve the static HTML UI at /
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+const BLENDER_HOST = 'localhost';
+const BLENDER_PORT = 9876;
 
 // Add CORS headers for local development
 app.use((req, res, next) => {
