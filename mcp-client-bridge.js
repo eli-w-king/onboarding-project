@@ -83,7 +83,7 @@ app.post('/chat', async (req, res) => {
   try {
     // Send chat to LLM MCP server
     console.log('[/chat] Sending messages to LLM:', JSON.stringify(messages, null, 2));
-    const llmResponse = await rpcCall(llmProc, 'agent', { messages });
+    const llmResponse = await rpcCall(llmProc, 'ask', { messages });
     console.log('[/chat] LLM response:', JSON.stringify(llmResponse, null, 2));
     // If LLM response includes tool calls, handle them
     if (llmResponse && llmResponse.tool_calls) {
