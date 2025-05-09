@@ -276,14 +276,27 @@ def execute_blender_code(ctx: Context, code: str) -> str:
     Parameters:
     - code: The Python code to execute
     """
+    MAX_CODE_SIZE = 10000  # Limit code to 10,000 characters
     try:
+        if not isinstance(code, str):
+            logger.error("Received non-string code for execution.")
+            return "Error: Submitted code is not a string."
+
+        if len(code) > MAX_CODE_SIZE:
+            logger.warning(f"Rejected code execution: code size {len(code)} exceeds limit of {MAX_CODE_SIZE}.")
+            return f"Error: Submitted code is too large to execute (limit is {MAX_CODE_SIZE} characters). Please simplify your request."
+
         # Get the global connection
         blender = get_blender_connection()
-        
-        result = blender.send_command("execute_code", {"code": code})
-        return f"Code executed successfully: {result.get('result', '')}"
+
+        try:
+            result = blender.send_command("execute_code", {"code": code})
+            return f"Code executed successfully: {result.get('result', '')}"
+        except Exception as e:
+            logger.error(f"Error executing code (inner): {str(e)}", exc_info=True)
+            return f"Error executing code: {str(e)}"
     except Exception as e:
-        logger.error(f"Error executing code: {str(e)}")
+        logger.error(f"Error executing code (outer): {str(e)}", exc_info=True)
         return f"Error executing code: {str(e)}"
 
 @mcp.tool()

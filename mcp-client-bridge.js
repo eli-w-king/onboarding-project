@@ -10,6 +10,8 @@ const app = express();
 const PORT = 3002;
 const BLENDER_HOST = 'localhost';
 const BLENDER_PORT = 9876;
+// Using a test API key - replace with your own for production use
+// The included test key is limited and may not work for all requests
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
 
 // Serve static files (index.html, etc.) from the current directory
@@ -39,9 +41,11 @@ app.post('/llm-agent', async (req, res) => {
   const systemPrompt = blenderPrompts.getComprehensiveSystemPrompt().join('\n');
 
   // Check for missing API key
-  if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.startsWith('sk-or-v1-') && OPENROUTER_API_KEY.length < 40) {
+  if (!OPENROUTER_API_KEY || (OPENROUTER_API_KEY.startsWith('sk-or-v1-') && OPENROUTER_API_KEY.length < 40)) {
     console.error('--- Missing or invalid OpenRouter API key ---');
-    return res.status(500).json({ error: 'Missing or invalid OpenRouter API key' });
+    console.error('Using the default key which may have limited usage or be expired');
+    // Continue with the request but log a warning
+    console.log('Attempting to use the default API key - this may fail');
   }
 
   const messages = [
@@ -125,7 +129,25 @@ app.post('/llm-agent', async (req, res) => {
     const client = new net.Socket();
     let responseData = Buffer.alloc(0);
     let responded = false;
+    
+    console.log(`Attempting to connect to Blender MCP at ${BLENDER_HOST}:${BLENDER_PORT}`);
+    
+    // Set a connection timeout
+    const connectionTimeout = setTimeout(() => {
+      if (!responded) {
+        console.error('Connection timeout while connecting to Blender MCP');
+        res.status(504).json({ 
+          error: 'Connection timeout while connecting to Blender MCP. Make sure Blender is running with MCP add-on.', 
+          code 
+        });
+        responded = true;
+        client.destroy();
+      }
+    }, 5000); // 5 second timeout
+    
     client.connect(BLENDER_PORT, BLENDER_HOST, () => {
+      clearTimeout(connectionTimeout);
+      console.log('Connected to Blender MCP');
       client.write(JSON.stringify({ type: 'execute_code', params: { code } }));
     });
     client.on('data', (data) => {
@@ -164,7 +186,22 @@ app.post('/llm-agent', async (req, res) => {
     });
     client.on('error', (err) => {
       if (!responded) {
-        res.status(500).json({ error: 'Socket error: ' + err.message, details: err, code });
+        console.error('Socket connection error:', err.message);
+        clearTimeout(connectionTimeout);
+        
+        // Provide a user-friendly message based on the error
+        let errorMessage = 'Error connecting to Blender';
+        if (err.code === 'ECONNREFUSED') {
+          errorMessage = 'Could not connect to Blender. Is Blender running with the MCP add-on activated?';
+        } else if (err.code === 'ETIMEDOUT') {
+          errorMessage = 'Connection to Blender timed out. Check if Blender is responsive.';
+        }
+        
+        res.status(500).json({ 
+          error: errorMessage,
+          details: process.env.NODE_ENV === 'development' ? err : undefined,
+          code 
+        });
         responded = true;
       }
     });
@@ -214,6 +251,22 @@ app.post('/blender-mcp', async (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+// Add global error handlers to prevent server crashes
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Log to file if desired
+  // Don't exit the process
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Log to file if desired
+  // Don't exit the process
+});
+
+// Start the server
+const server = app.listen(PORT, () => {
   console.log(`MCP client bridge listening on http://localhost:${PORT}`);
+  console.log(`Server started at: ${new Date().toISOString()}`);
+  console.log(`Blender MCP expected at: ${BLENDER_HOST}:${BLENDER_PORT}`);
 });
