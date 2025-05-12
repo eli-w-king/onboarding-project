@@ -226,6 +226,8 @@
     </style>
 </head>
 <body>
+
+
     <div style="background:#fff;padding:15px;box-shadow:0 2px 5px rgba(0,0,0,0.1);margin-bottom:10px;">
         <strong>Blender MCP Bridge</strong><br>
         <span style="color:#666;font-size:14px;">Enter Blender Python code below and send it directly to Blender via MCP.</span>
@@ -369,20 +371,27 @@
                         throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
                     }
                 const data = await response.json();
-                let code = data.code || '[No code generated]';
-                // Decode HTML entities if present in code
-                function decodeHtmlEntities(str) {
-                  return str.replace(/&#(\d+);/g, (m, n) => String.fromCharCode(n))
-                            .replace(/&quot;/g, '"')
-                            .replace(/&apos;/g, "'")
-                            .replace(/&lt;/g, '<')
-                            .replace(/&gt;/g, '>')
-                            .replace(/&amp;/g, '&');
+                // Always show the LLM's message field (for both code and non-code responses)
+                if (data.message) {
+                    addMessageToUI(llmMessagesContainer, 'assistant', data.message);
+                } else {
+                    // fallback for legacy/edge cases
+                    let code = data.code || '';
+                    let printMessage = null;
+                    let printMatch = code.match(/print\((['"])(.*?)\1\)/);
+                    if (printMatch && printMatch[2]) {
+                        printMessage = printMatch[2];
+                    }
+                    let blenderResult =
+                        printMessage ||
+                        data.blenderResult?.result ||
+                        data.blenderResult?.message ||
+                        data.blenderResult?.stdout ||
+                        data.blenderResult?.output ||
+                        data.result ||
+                        '[No response from Blender]';
+                    addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
                 }
-                const rawCode = decodeHtmlEntities(code);
-                let blenderResult = data.blenderResult?.result || data.blenderResult?.message || '[No response from Blender]';
-                addMessageToUI(llmMessagesContainer, 'assistant', `<b>Generated Blender Python code:</b><br><pre>${escapeHtml(rawCode)}</pre>`);
-                addMessageToUI(llmMessagesContainer, 'assistant', `<b>Blender result:</b><br>${escapeHtml(blenderResult)}`);
                 llmStatusElement.textContent = 'Ready.';
                 } catch (error) {
                     console.error('Error in LLM/Blender flow:', error);

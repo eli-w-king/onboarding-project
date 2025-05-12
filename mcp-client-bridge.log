@@ -1,3 +1,250 @@
+Loaded environment variables from .env file
+Using OpenRouter API key: sk-or-v1-0...
 MCP client bridge listening on http://localhost:3002
+Server started at: 2025-05-10T00:54:27.534Z
+Blender MCP expected at: localhost:9876
 --- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1746838758-YdfvKhmIJkkAfbRGPaO2",
+  "provider": "OpenAI",
+  "model": "openai/gpt-4o",
+  "object": "chat.completion",
+  "created": 1746838759,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  'type': 'blender_command',\n  'code': 'import bpy\\n\\n# Create a new circle mesh\\nbpy.ops.mesh.primitive_circle_add(radius=2, fill_type=\\'NOTHING\\')\\ncircle = bpy.context.object\\n\\n# Set the circle's location to the center of the scene\\ncircle.location = (0, 0, 0)\\n\\n# Create a new material with a yellow color\\nmaterial = bpy.data.materials.new(name=\"YellowMaterial\")\\nmaterial.use_nodes = True\\nbsdf = material.node_tree.nodes.get(\"Principled BSDF\")\\nbsdf.inputs[\"Base Color\"].default_value = (1, 1, 0, 1)  # Yellow color\\n\\n# Assign the material to the circle\\nif circle.data.materials:\\n    circle.data.materials[0] = material\\nelse:\\n    circle.data.materials.append(material)\\n\\nprint(\"Added a yellow circle around the objects.\")',\n  'message': 'Added a vibrant yellow circle around your objects, enhancing the scene with a bold outline.'\n}\n```",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "system_fingerprint": "fp_f5bdcc3276",
+  "usage": {
+    "prompt_tokens": 915,
+    "completion_tokens": 233,
+    "total_tokens": 1148,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  }
+}
 --- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1746838832-2dSZflSrxF94mAnKVBCJ",
+  "provider": "OpenAI",
+  "model": "openai/gpt-4o",
+  "object": "chat.completion",
+  "created": 1746838832,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\n# Create a new sphere\\nbpy.ops.mesh.primitive_uv_sphere_add()\\nsphere = bpy.context.active_object\\n\\n# Create a new material\\nmaterial = bpy.data.materials.new(name='BlackMaterial')\\nmaterial.use_nodes = True\\n\\n# Set the material to black\\nbsdf = material.node_tree.nodes.get('Principled BSDF')\\nbsdf.inputs['Base Color'].default_value = (0, 0, 0, 1)\\n\\n# Assign the material to the sphere\\nsphere.data.materials.append(material)\\n\\nprint('Created a sleek black sphere in your scene.')\",\n  \"message\": \"Created a sleek black sphere in your scene.\"\n}\n```",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "system_fingerprint": "fp_f5bdcc3276",
+  "usage": {
+    "prompt_tokens": 912,
+    "completion_tokens": 168,
+    "total_tokens": 1080,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  }
+}
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1746838897-bEZaeXW0ftRhcFeecxx2",
+  "provider": "OpenAI",
+  "model": "openai/gpt-4o",
+  "object": "chat.completion",
+  "created": 1746838897,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "length",
+      "native_finish_reason": "length",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\n# Create a new torus object\\nbpy.ops.mesh.primitive_torus_add(major_radius=2, minor_radius=0.1, location=(0, 0, 0))\\ntorus = bpy.context.object\\n\\n# Set the torus color to yellow\\nmaterial = bpy.data.materials.new(name='YellowMaterial')\\nmaterial.use_nodes = True\\nbsdf = material.node_tree.nodes.get('Principled BSDF')\\nbsdf.inputs['Base Color'].default_value = (1, 1, 0, 1)  # RGBA for yellow\\n\\ntorus.data.materials.append(material)\\n\\n# Scale the torus to encompass all objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Adjust torus size to fit around all selected objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale the torus to fit around the objects\\nbpy.ops.object.select_all(action='DESELECT')\\nfor obj in bpy.data.objects:\\n    if obj.type == 'MESH' and obj != torus:\\n        obj.select_set(True)\\n\\nbpy.context.view_layer.objects.active = torus\\nbpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='BOUNDS')\\n\\nbpy.ops.object.select_all(action='DESELECT')\\ntorus.select_set(True)\\n\\nbpy.ops.object.transform_apply(location=False, rotation=False, scale=True)\\n\\n# Scale",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "system_fingerprint": "fp_f5bdcc3276",
+  "usage": {
+    "prompt_tokens": 916,
+    "completion_tokens": 2048,
+    "total_tokens": 2964,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  }
+}
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1746839820-DfeH7rVkmntaAY3YO06a",
+  "provider": "OpenAI",
+  "model": "openai/gpt-4o",
+  "object": "chat.completion",
+  "created": 1746839820,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\n# Create a new cube\\nbpy.ops.mesh.primitive_cube_add(size=2)\\ncube = bpy.context.object\\n\\n# Set the cube's location next to existing objects\\nexisting_objects = [obj for obj in bpy.data.objects if obj.type == 'MESH' and obj != cube]\\nif existing_objects:\\n    max_x = max(obj.location.x for obj in existing_objects)\\n    cube.location.x = max_x + 3  # Adjust the distance as needed\\n\\n# Create a new material with a red color\\nred_material = bpy.data.materials.new(name='RedMaterial')\\nred_material.use_nodes = True\\nbsdf = red_material.node_tree.nodes.get('Principled BSDF')\\nbsdf.inputs['Base Color'].default_value = (1, 0, 0, 1)  # Red color\\n\\n# Assign the red material to the cube\\nif cube.data.materials:\\n    cube.data.materials[0] = red_material\\nelse:\\n    cube.data.materials.append(red_material)\\n\\nprint('Created a vibrant red cube next to the others.')\",\n  \"message\": \"Created a vibrant red cube next to the others.\"\n}\n```",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "system_fingerprint": "fp_f5bdcc3276",
+  "usage": {
+    "prompt_tokens": 916,
+    "completion_tokens": 273,
+    "total_tokens": 1189,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  }
+}
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1746839847-Ve8QKXKeBgujcOryu277",
+  "provider": "OpenAI",
+  "model": "openai/gpt-4o",
+  "object": "chat.completion",
+  "created": 1746839847,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  'type': 'blender_command',\n  'code': '''\nimport bpy\nimport bmesh\nfrom math import radians\n\n# Calculate the bounding box of all objects\nmin_x, min_y, min_z = float('inf'), float('inf'), float('inf')\nmax_x, max_y, max_z = float('-inf'), float('-inf'), float('-inf')\n\nfor obj in bpy.data.objects:\n    if obj.type == 'MESH':\n        for vertex in obj.bound_box:\n            world_vertex = obj.matrix_world @ bpy.mathutils.Vector(vertex)\n            min_x = min(min_x, world_vertex.x)\n            min_y = min(min_y, world_vertex.y)\n            min_z = min(min_z, world_vertex.z)\n            max_x = max(max_x, world_vertex.x)\n            max_y = max(max_y, world_vertex.y)\n            max_z = max(max_z, world_vertex.z)\n\n# Calculate the center and dimensions\ncenter_x = (min_x + max_x) / 2\ncenter_y = (min_y + max_y) / 2\ncenter_z = (min_z + max_z) / 2\nradius = max(max_x - min_x, max_y - min_y) / 2 + 1  # Add some padding\n\n# Create a new circle mesh\nbpy.ops.mesh.primitive_circle_add(radius=radius, location=(center_x, center_y, center_z))\ncircle = bpy.context.active_object\n\n# Extrude the circle to form a tube\nbpy.ops.object.mode_set(mode='EDIT')\nbmesh_obj = bmesh.from_edit_mesh(circle.data)\nbmesh.ops.extrude_edge_only(bmesh_obj, edges=bmesh_obj.edges)\nbmesh_obj.verts.ensure_lookup_table()\nbmesh.ops.translate(bmesh_obj, verts=bmesh_obj.verts[-len(bmesh_obj.verts)//2:], vec=(0, 0, max_z - min_z + 2))\nbmesh.update_edit_mesh(circle.data)\nbpy.ops.object.mode_set(mode='OBJECT')\n\n# Create a yellow material\nmaterial = bpy.data.materials.new(name=\"YellowMaterial\")\nmaterial.use_nodes = True\nbsdf = material.node_tree.nodes.get('Principled BSDF')\nbsdf.inputs['Base Color'].default_value = (1, 1, 0, 1)  # Yellow color\n\n# Assign the material to the circle\nif len(circle.data.materials) == 0:\n    circle.data.materials.append(material)\nelse:\n    circle.data.materials[0] = material\n\nprint(\"Created a vibrant yellow tube encircling all objects.\")\n''',\n  'message': 'Created a vibrant yellow tube encircling all objects.'\n}\n```",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "system_fingerprint": "fp_f5bdcc3276",
+  "usage": {
+    "prompt_tokens": 922,
+    "completion_tokens": 560,
+    "total_tokens": 1482,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  }
+}
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1746840200-oQcm1xWgIBv2p43kzM0H",
+  "provider": "OpenAI",
+  "model": "openai/gpt-4o",
+  "object": "chat.completion",
+  "created": 1746840200,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  'type': 'blender_command',\n  'code': 'import bpy\\nimport math\\n\\n# Ensure the circle tube exists\\ncircle_tube = bpy.data.objects.get(\"CircleTube\")\\nif not circle_tube:\\n    # Create a yellow circle tube if it doesn't exist\\n    bpy.ops.mesh.primitive_cylinder_add(radius=1, depth=0.1, location=(0, 0, 0))\\n    circle_tube = bpy.context.object\\n    circle_tube.name = \"CircleTube\"\\n    circle_tube.scale = (1, 1, 0.1)\\n    mat = bpy.data.materials.new(name=\"YellowMaterial\")\\n    mat.use_nodes = True\\n    bsdf = mat.node_tree.nodes.get(\"Principled BSDF\")\\n    bsdf.inputs[\"Base Color\"].default_value = (1, 1, 0, 1)  # Yellow\\n    circle_tube.data.materials.append(mat)\\n\\n# Calculate positions for small black spheres\\nnum_spheres = 12\\nradius = circle_tube.dimensions.x / 2\\nangle_step = 2 * math.pi / num_spheres\\n\\n# Create small black spheres\\nfor i in range(num_spheres):\\n    angle = i * angle_step\\n    x = radius * math.cos(angle)\\n    y = radius * math.sin(angle)\\n    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.05, location=(x, y, 0))\\n    sphere = bpy.context.object\\n    sphere.name = f\"BlackSphere_{i}\"\\n    mat = bpy.data.materials.new(name=f\"BlackMaterial_{i}\")\\n    mat.use_nodes = True\\n    bsdf = mat.node_tree.nodes.get(\"Principled BSDF\")\\n    bsdf.inputs[\"Base Color\"].default_value = (0, 0, 0, 1)  # Black\\n    sphere.data.materials.append(mat)\\n\\nprint(\"Added small black spheres along the yellow circle tube in a polka dot pattern.\")',\n  'message': 'Added small black spheres along the yellow circle tube in a polka dot pattern.'\n}\n```",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "system_fingerprint": "fp_f5bdcc3276",
+  "usage": {
+    "prompt_tokens": 928,
+    "completion_tokens": 466,
+    "total_tokens": 1394,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  }
+}
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1746840232-DkKkXRC6lZo5b2ZvIugZ",
+  "provider": "OpenAI",
+  "model": "openai/gpt-4o",
+  "object": "chat.completion",
+  "created": 1746840232,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  'type': 'blender_command',\n  'code': \"import bpy\\n\\n# Ensure the cone exists and is blue\\ncone = bpy.data.objects.get('Cone')\\nif cone:\\n    cone.location = (0, 0, 0)  # Position cone at origin for reference\\n    mat = bpy.data.materials.new(name='BlueMaterial')\\n    mat.use_nodes = True\\n    bsdf = mat.node_tree.nodes.get('Principled BSDF')\\n    bsdf.inputs['Base Color'].default_value = (0, 0, 1, 1)  # Blue color\\n    cone.data.materials.append(mat)\\n\\n# Create a UV sphere and scale it to form a dome\\nbpy.ops.mesh.primitive_uv_sphere_add(location=(2, 0, 0))\\ndome = bpy.context.object\\nbpy.ops.object.shade_smooth()\\ndome.scale.z = 0.5  # Flatten to form a dome shape\\n\\n# Apply a white material to the dome\\nwhite_mat = bpy.data.materials.new(name='WhiteMaterial')\\nwhite_mat.use_nodes = True\\nwhite_bsdf = white_mat.node_tree.nodes.get('Principled BSDF')\\nwhite_bsdf.inputs['Base Color'].default_value = (1, 1, 1, 1)  # White color\\ndome.data.materials.append(white_mat)\\n\\nprint('Created a white dome next to the blue cone.')\",\n  'message': 'Created a white dome next to the blue cone.'\n}\n```",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "system_fingerprint": "fp_f5bdcc3276",
+  "usage": {
+    "prompt_tokens": 917,
+    "completion_tokens": 334,
+    "total_tokens": 1251,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  }
+}

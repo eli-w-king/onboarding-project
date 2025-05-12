@@ -35,6 +35,63 @@ app.post('/blender-mcp', async (req, res) => {
     return res.status(400).json({ error: 'Missing command type' });
   }
 
+  // If this is a code execution request, sanitize the code
+  if (type === 'execute_code' && params && params.code) {
+    try {
+      const originalCode = params.code;
+      let code = params.code;
+      
+      // Check for the common problematic line pattern that has appeared multiple times in logs
+      if (code.includes('radius = circle_tube.dimensions.x e_step = 2 * math.pi res')) {
+        console.log('Detected specific problematic line pattern, replacing with correct code');
+        code = code.replace(
+          'radius = circle_tube.dimensions.x e_step = 2 * math.pi res',
+          'radius = circle_tube.dimensions.x / 2\nangle_step = 2 * math.pi / num_spheres'
+        );
+      }
+      
+      // Split the code into lines and analyze each line
+      const lines = code.split('\n');
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // Look for lines that appear to have multiple variable assignments without proper line breaks
+        if (line.match(/\w+\s*=\s*[\w\.]+\s+\w+\s*=/) || 
+            line.match(/=\s*[\w\.]+\s+\w+/) ||
+            line.includes(' e_step =') || 
+            line.includes(' res')) {
+          
+          console.log(`Fixing problematic line: "${lines[i]}"`);
+          
+          // Most aggressive approach: if a line contains both "radius" and "e_step" or similar patterns,
+          // just replace it entirely with a known good version
+          if (line.includes('radius') && (line.includes('e_step') || line.includes('res'))) {
+            lines[i] = 'radius = circle_tube.dimensions.x / 2\nangle_step = 2 * math.pi / num_spheres';
+          } else {
+            // Otherwise try to fix the syntax
+            lines[i] = lines[i]
+              .replace(/(\w+)\s*=\s*([\w\.]+)\s+e_step/g, '$1 = $2 / 2\nangle_step')
+              .replace(/(\w+)\s*=\s*([\w\.]+)\s+(\w+)\s*=/g, '$1 = $2\n$3 =')
+              .replace(/(\w+)\s*=\s*([\w\.]+)\s+res/g, '$1 = $2 / num_spheres')
+              .replace(/e_step\s*=\s*([\d\.]+\s*\*\s*[\w\.]+)\s+res/g, 'angle_step = $1 / num_spheres');
+          }
+        }
+      }
+      code = lines.join('\n');
+      
+      // If we changed the code, log the changes
+      if (originalCode !== code) {
+        console.log('Code sanitized:');
+        console.log('Before:', originalCode);
+        console.log('After:', code);
+        params.code = code;
+      }
+    } catch (err) {
+      console.error('Error sanitizing code:', err);
+      // Continue with the original code if sanitizing fails
+    }
+  }
+
   // Connect to Blender MCP socket
   const client = new net.Socket();
   let responseData = Buffer.alloc(0);

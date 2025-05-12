@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blender Remote Script Server Demo</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        textarea { width: 100%; height: 120px; }
+        img { max-width: 100%; margin-top: 1em; border: 1px solid #ccc; }
+        #result { margin-top: 1em; }
+    </style>
+</head>
+<body>
+    <h2>Blender Remote Script Server Demo</h2>
+    <form id="scriptForm">
+        <label for="code">Blender Python Script:</label><br>
+        <textarea id="code"># Example: Render a cube and save image
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete()
+bpy.ops.mesh.primitive_cube_add()
+bpy.context.scene.render.filepath = SCRIPT_RESULT_PATH
+bpy.ops.ren/Applications/Blender.app/Contents/Resources/3.6/python/bin/python3.10 -m pip install flask-corsder.render(write_still=True)
+</textarea><br>
+        <button type="submit">Run Script</button>
+    </form>
+    <div id="result"></div>
+    <img id="outputImage" style="display:none;" />
+    <script>
+    document.getElementById('scriptForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const code = document.getElementById('code').value;
+        const resultDiv = document.getElementById('result');
+        const img = document.getElementById('outputImage');
+        resultDiv.textContent = 'Running...';
+        img.style.display = 'none';
+        try {
+            const response = await fetch('http://localhost:5002/run_script', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            if (response.headers.get('content-type')?.includes('image')) {
+                const blob = await response.blob();
+                img.src = URL.createObjectURL(blob);
+                img.style.display = 'block';
+                resultDiv.textContent = 'Rendered image:';
+            } else {
+                const data = await response.json();
+                resultDiv.textContent = data.status + ': ' + (data.message || '');
+            }
+        } catch (err) {
+            resultDiv.textContent = 'Error: ' + err;
+        }
+    };
+    </script>
+</body>
+</html>

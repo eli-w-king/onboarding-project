@@ -1,5 +1,94 @@
 # blender_mcp_server.py
 from modelcontextprotocol.mcp.server.fastmcp import FastMCP, Context, Image
+# --- Live Viewport Streaming Imports ---
+import threading
+import time
+import io
+try:
+    import bpy
+    from PIL import Image as PILImage
+    import numpy as np
+    from flask import Flask, send_file, make_response
+except ImportError:
+    bpy = None  # Not running inside Blender
+    PILImage = None
+    np = None
+    Flask = None
+    send_file = None
+    make_response = None
+# Main execution
+
+# --- Live Viewport Streaming Globals and Functions ---
+flask_app = Flask(__name__) if Flask else None
+_latest_frame_jpg = None
+_frame_lock = threading.Lock()
+
+def capture_blender_viewport():
+    """Capture the Blender 3D viewport and update the global JPEG buffer."""
+    global _latest_frame_jpg
+    if not bpy or not PILImage or not np:
+        return
+    try:
+        # Get the current area and region for 3D View
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            override = {'window': window, 'screen': window.screen, 'area': area, 'region': region}
+                            # Capture the viewport as an offscreen buffer
+                            width = region.width
+                            height = region.height
+                            # Use offscreen render
+                            offscreen = bpy.types.GPUOffScreen(width, height)
+                            with offscreen.bind():
+                                bpy.ops.render.opengl(override, view_context=True)
+                                buffer = offscreen.read_color(0, 0, width, height, 4, 0, 'BYTE')
+                            offscreen.free()
+                            # Convert buffer to numpy array and then to PIL Image
+                            arr = np.frombuffer(buffer, dtype=np.uint8).reshape((height, width, 4))
+                            arr = np.flip(arr, axis=0)  # Flip vertically
+                            img = PILImage.fromarray(arr[..., :3], 'RGB')
+                            buf = io.BytesIO()
+                            img.save(buf, format='JPEG', quality=80)
+                            with _frame_lock:
+                                _latest_frame_jpg = buf.getvalue()
+                            return
+    except Exception as e:
+        print(f"[Viewport Stream] Error capturing viewport: {e}")
+
+def frame_capture_loop():
+    while True:
+        capture_blender_viewport()
+        time.sleep(0.1)  # ~100ms
+
+if flask_app:
+    @flask_app.route('/frame.jpg')
+    def serve_frame():
+        with _frame_lock:
+            if _latest_frame_jpg:
+                response = make_response(_latest_frame_jpg)
+                response.headers['Content-Type'] = 'image/jpeg'
+                response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+                return response
+            else:
+                return ("No frame available", 503)
+
+def start_flask_server():
+    if flask_app:
+        flask_app.run(host='0.0.0.0', port=5001, threaded=True, use_reloader=False)
+
+def start_viewport_streaming():
+    if not bpy or not Flask:
+        print("[Viewport Stream] Not running inside Blender or Flask not available.")
+        return
+    # Start frame capture thread
+    t1 = threading.Thread(target=frame_capture_loop, daemon=True)
+    t1.start()
+    # Start Flask server thread
+    t2 = threading.Thread(target=start_flask_server, daemon=True)
+    t2.start()
+    print("[Viewport Stream] Flask server and frame capture started on port 5001.")
 import socket
 import json
 import asyncio
@@ -761,13 +850,14 @@ def asset_creation_strategy() -> str:
 
 # Main execution
 
-def main():
-    """Run the MCP server"""
-    mcp.run()
 
-if __name__ == "__main__":
-    main()
-    """Run the MCP server"""
+def main():
+    # Start viewport streaming (Flask + capture thread)
+    try:
+        start_viewport_streaming()
+    except Exception as e:
+        print(f"[Viewport Stream] Failed to start: {e}")
+    # Start MCP server (blocking)
     mcp.run()
 
 if __name__ == "__main__":
