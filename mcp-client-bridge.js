@@ -81,7 +81,7 @@ app.post('/llm-agent', async (req, res) => {
         'X-Title': 'Blender LLM Bridge'
       },
       body: JSON.stringify({
-        model: 'openai/gpt-4.5-turbo',
+        model: 'google/gemini-2.5-flash-preview:thinking', // Changed from openai/gpt-4o
         messages,
         max_tokens: 2048,
         temperature: 0.2
