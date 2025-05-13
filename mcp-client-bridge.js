@@ -259,11 +259,13 @@ app.post('/llm-agent', async (req, res) => {
       // Fix incomplete lines that might have been truncated
       const lines = code.split('\n');
       for (let i = 0; i < lines.length; i++) {
-        // Detect incomplete variable assignments
-        if (/[a-zA-Z0-9_]+\s+=\s+[a-zA-Z0-9_\.]+$/.test(lines[i].trim())) {
+        // Detect truly incomplete assignments or lines ending with an operator
+        const trimmed = lines[i].trim();
+        // Flag only lines that end with an assignment operator and nothing after, or end with an operator
+        if (/^[a-zA-Z0-9_\.]+\s*=\s*$/.test(trimmed) || /[+\-*/=]\s*$/.test(trimmed)) {
           lines[i] += ' # Missing value or operator - auto-fixed';
         }
-        
+
         // Look for variable names directly next to operators without spaces
         lines[i] = lines[i].replace(/([a-zA-Z0-9_]+)([+\-*/])([a-zA-Z0-9_]+)/g, '$1 $2 $3');
       }
