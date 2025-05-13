@@ -51,7 +51,14 @@
             margin: 0 auto;
             width: 100%;
             padding: 20px;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
+
+        /* Chat border animation removed */
 
         .messages {
             flex-grow: 1;
@@ -86,18 +93,45 @@
             display: flex;
             gap: 10px;
             padding: 20px 0;
+            position: sticky;
+            bottom: 0;
+            margin-top: auto;
         }
 
         .input-area textarea {
             flex-grow: 1;
-            padding: 15px;
+            padding: 15px 20px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 24px;
             resize: none;
-            height: 60px;
+            height: 54px;
             font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .input-area textarea:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 2px 8px rgba(33,150,243,0.2);
         }
 
+        .input-area button {
+            width: 54px;
+            height: 54px;
+            padding: 0;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         button {
             padding: 10px 20px;
             background-color: #2196f3;
@@ -109,6 +143,15 @@
             transition: background-color 0.2s;
         }
 
+        .input-area button:hover {
+            background-color: #0b7dda;
+            transform: scale(1.05);
+        }
+        
+        .input-area button:active {
+            transform: scale(0.95);
+        }
+
         button:hover {
             background-color: #0b7dda;
         }
@@ -116,6 +159,7 @@
         button:disabled {
             background-color: #b0bec5;
             cursor: not-allowed;
+            transform: none;
         }
 
         .status {
@@ -228,6 +272,70 @@
         .chat-container {
             height: calc(100vh - 20px);
         }
+
+        /* API key status dot animation */
+        #api-key-dot {
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #api-key-dot.loading {
+            background: conic-gradient(#2563eb 0% 30%, #60a5fa 30% 60%, #e0edff 60% 100%);
+            animation: spin-dot 0.8s linear infinite;
+            box-shadow: 0 0 6px rgba(96, 165, 250, 0.5);
+        }
+
+        @keyframes spin-dot {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive styles for mobile */
+        @media (max-width: 768px) {
+            .api-key-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .api-key-container input {
+                width: 100%;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .chat-container {
+                padding: 15px 10px;
+            }
+            
+            .input-area {
+                padding: 15px 0;
+            }
+        }
+
+        /* Simple progress bar below the chat input */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background-color: #f0f0f0;
+            border-radius: 2px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-container.visible {
+            display: block;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #2196f3;
+            width: 0%;
+            transition: width 0.1s linear;
+            border-radius: 2px;
+        }
+        .input-area {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -239,22 +347,24 @@
         <span id="api-key-status" class="status" style="display:flex;align-items:center;gap:6px;"><span id="api-key-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#aaa;"></span></span>
     </div>
 
-    <div class="chat-container" style="margin-top:10px; height: calc(100vh - 20px);">
-        <div class="messages" id="llm-messages">
-            <div class="message assistant">
-                <b>LLM Agent:</b> Enter a natural language request below. The LLM will generate Blender Python code and execute it in Blender.<br>
-                <span style="color:#888;font-size:13px;">Powered by OpenRouter (best agent model, tools enabled)</span>
-            </div>
+    <div id="chat-container" class="chat-container" style="margin-top:10px; height: calc(100vh - 70px); display: flex; flex-direction: column;">
+        <div class="messages" id="llm-messages" style="flex-grow: 1; overflow-y: auto;">
+            <!-- Welcome message removed -->
         </div>
+        <!-- Old progress bar removed, now replaced by full-width bar in input-area -->
         <div class="input-area">
-            <textarea id="llm-user-input" placeholder="Type your Blender request in plain English..."></textarea>
+            <textarea id="llm-user-input" placeholder="Design with words..."></textarea>
             <button id="llm-send-button" title="Send">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="22" y1="2" x2="11" y2="13"></line>
                   <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                 </svg>
             </button>
         </div>
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <!-- Progress bar will be moved inside .input-area -->
         <p class="status" id="llm-status"></p>
     </div>
 
@@ -268,6 +378,7 @@
             const apiKeyDot = document.getElementById('api-key-dot');
 
             function setApiKeyStatus(color) {
+                apiKeyDot.classList.remove('loading'); // Remove loading animation
                 apiKeyDot.style.background = color;
             }
 
@@ -279,8 +390,30 @@
             let apiKeyCheckTimeout = null;
             let lastApiKey = '';
             let helloSentForKey = {};
+            
+            // Function to mask API key with asterisks
+            function maskApiKey() {
+                // Only mask if there's actual content
+                if (apiKeyInput.value.trim()) {
+                    // Store current selection positions
+                    const start = apiKeyInput.selectionStart;
+                    const end = apiKeyInput.selectionEnd;
+                    // Change to password type
+                    apiKeyInput.type = 'password';
+                    // Restore selection
+                    apiKeyInput.setSelectionRange(start, end);
+                } else {
+                    // If empty, show as text field
+                    apiKeyInput.type = 'text';
+                }
+            }
+            
             apiKeyInput.addEventListener('input', function() {
                 const key = apiKeyInput.value.trim();
+                
+                // Immediately mask the API key
+                maskApiKey();
+                
                 if (!key) {
                     setApiKeyStatus('#aaa');
                     apiKeyValid = false;
@@ -288,8 +421,11 @@
                     llmSendButton.disabled = true;
                     return;
                 }
-                setApiKeyStatus('#aaa');
+                
+                // Show loading animation
+                apiKeyDot.classList.add('loading');
                 llmSendButton.disabled = true;
+                
                 if (apiKeyCheckTimeout) clearTimeout(apiKeyCheckTimeout);
                 apiKeyCheckTimeout = setTimeout(async () => {
                     try {
@@ -313,7 +449,7 @@
                                     // Only set as valid if we get a real message back
                                     if (helloData && helloData.message) {
                                         setApiKeyStatus('#2ecc40');
-                                        apiKeyInput.type = 'password';
+                                        // Keep as password type
                                         apiKeyValid = true;
                                         llmSendButton.disabled = false;
                                         // Only show hello if not already shown for this key
@@ -324,7 +460,7 @@
                                         }
                                     } else {
                                         setApiKeyStatus('#d32f2f');
-                                        apiKeyInput.type = 'text';
+                                        // Keep masked even on error
                                         apiKeyValid = false;
                                         lastApiKey = '';
                                         llmSendButton.disabled = true;
@@ -332,28 +468,28 @@
                                 } else {
                                     // LLM endpoint returned error (401, 403, etc)
                                     setApiKeyStatus('#d32f2f');
-                                    apiKeyInput.type = 'text';
+                                    // Keep masked even on error
                                     apiKeyValid = false;
                                     lastApiKey = '';
                                     llmSendButton.disabled = true;
                                 }
                             } catch (e) {
                                 setApiKeyStatus('#d32f2f');
-                                apiKeyInput.type = 'text';
+                                // Keep masked even on error
                                 apiKeyValid = false;
                                 lastApiKey = '';
                                 llmSendButton.disabled = true;
                             }
                         } else {
                             setApiKeyStatus('#d32f2f');
-                            apiKeyInput.type = 'text';
+                            // Keep masked even on error
                             apiKeyValid = false;
                             lastApiKey = '';
                             llmSendButton.disabled = true;
                         }
                     } catch (err) {
                         setApiKeyStatus('#d32f2f');
-                        apiKeyInput.type = 'text';
+                        // Keep masked even on error
                         apiKeyValid = false;
                         lastApiKey = '';
                         llmSendButton.disabled = true;
@@ -406,11 +542,37 @@
                     llmStatusElement.innerHTML = `<span class="error">Please enter your OpenRouter API key above.</span>`;
                     return;
                 }
+                
+                // Start loading animation with smooth progress bar
+                const progressContainer = document.getElementById('progress-container');
+                const progressBar = document.getElementById('progress-bar');
+                progressContainer.classList.add('visible');
+                progressBar.style.transition = 'none';
+                progressBar.style.width = '0%';
+                // Force reflow to apply the transition reset
+                void progressBar.offsetWidth;
+                progressBar.style.transition = 'width 0.3s linear';
+                const maxTimeout = 20000; // 20 seconds max timeout
+                let startTime = Date.now();
+                let animationFrame;
+                let finished = false;
+                function animateProgress() {
+                    if (finished) return;
+                    const elapsedTime = Date.now() - startTime;
+                    const progress = Math.min((elapsedTime / maxTimeout) * 100, 99.5); // Cap at 99.5% until completion
+                    progressBar.style.width = progress + '%';
+                    if (progress < 99.5) {
+                        animationFrame = requestAnimationFrame(animateProgress);
+                    }
+                }
+                animateProgress();
+                
                 addMessageToUI(llmMessagesContainer, 'user', userMessageText);
                 llmUserInput.value = '';
                 llmSendButton.disabled = true;
                 llmUserInput.disabled = true;
-                llmStatusElement.textContent = 'Asking LLM and sending code to Blender...';
+                // Remove status text for minimal UI
+                
                 try {
                     const response = await fetch('http://localhost:3002/llm-agent', {
                         method: 'POST',
@@ -443,15 +605,25 @@
                         '[No response from Blender]';
                     addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
                 }
-                llmStatusElement.textContent = 'Ready.';
+                // No status text for minimal UI
                 } catch (error) {
                     console.error('Error in LLM/Blender flow:', error);
-                    llmStatusElement.innerHTML = `<span class="error">Error: ${escapeHtml(error.message)}`;
                     addMessageToUI(llmMessagesContainer, 'assistant', `Sorry, I encountered an error: ${escapeHtml(error.message)}`);
                 } finally {
-                    llmSendButton.disabled = false;
-                    llmUserInput.disabled = false;
-                    llmUserInput.focus();
+                    // Complete the progress animation smoothly
+                    finished = true;
+                    progressBar.style.width = '100%';
+                    setTimeout(() => {
+                        progressContainer.classList.remove('visible');
+                        progressBar.style.transition = 'none';
+                        progressBar.style.width = '0%';
+                        // Restore the transition after reset
+                        setTimeout(() => { progressBar.style.transition = 'width 0.3s linear'; }, 50);
+                        llmSendButton.disabled = false;
+                        llmUserInput.disabled = false;
+                        llmUserInput.focus();
+                    }, 400);
+                    if (animationFrame) cancelAnimationFrame(animationFrame);
                 }
             }
 
