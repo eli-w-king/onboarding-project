@@ -98,6 +98,32 @@
             margin-top: auto;
         }
 
+        .input-status-bar {
+            max-width: 600px;
+            min-width: 220px;
+            width: 100%;
+            height: 4px;
+            margin: 0 auto 6px auto;
+            background: #e3eaf3;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            transition: background 0.2s;
+            box-sizing: border-box;
+            display: block;
+        }
+        .input-status-bar-progress {
+            height: 100%;
+            width: 0%;
+            background-color: #2196f3;
+            border-radius: 2px;
+            transition: width 0.2s linear;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        
+
         .input-area textarea {
             flex-grow: 1;
             padding: 15px 28px;
@@ -382,6 +408,9 @@
             <!-- Welcome message removed -->
         </div>
         <!-- Old progress bar removed, now replaced by full-width bar in input-area -->
+        <div class="input-status-bar" id="input-status-bar">
+            <div class="input-status-bar-progress" id="input-status-bar-progress"></div>
+        </div>
         <div class="input-area">
             <textarea id="llm-user-input" placeholder="Design with words..."></textarea>
             <button id="llm-send-button" title="Send">
@@ -555,11 +584,14 @@
             }
 
             function addMessageToUI(container, role, content) {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', role);
-                messageDiv.innerHTML = formatMessageContent(content);
-                container.appendChild(messageDiv);
-                container.scrollTop = container.scrollHeight;
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', role);
+    messageDiv.innerHTML = formatMessageContent(content);
+    container.appendChild(messageDiv);
+    // Default: always scroll to bottom (remove custom scroll logic)
+    setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+    }, 0);
             }
 
             // LLM agent chat logic
@@ -572,6 +604,27 @@
                     return;
                 }
                 
+                // Show status bar progress
+                const statusBar = document.getElementById('input-status-bar');
+                const statusBarProgress = document.getElementById('input-status-bar-progress');
+                statusBarProgress.style.transition = 'none';
+                statusBarProgress.style.width = '0%';
+                void statusBarProgress.offsetWidth;
+                statusBarProgress.style.transition = 'width 0.3s linear';
+                const maxTimeout = 20000;
+                let startTime = Date.now();
+                let finished = false;
+                function animateStatusBar() {
+                    if (finished) return;
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min((elapsed / maxTimeout) * 100, 99.5);
+                    statusBarProgress.style.width = progress + '%';
+                    if (progress < 99.5) {
+                        requestAnimationFrame(animateStatusBar);
+                    }
+                }
+                animateStatusBar();
+
                 addMessageToUI(llmMessagesContainer, 'user', userMessageText);
                 llmUserInput.value = '';
                 llmSendButton.disabled = true;
@@ -614,9 +667,16 @@
                     console.error('Error in LLM/Blender flow:', error);
                     addMessageToUI(llmMessagesContainer, 'assistant', `Sorry, I encountered an error: ${escapeHtml(error.message)}`);
                 } finally {
-                    llmSendButton.disabled = false;
-                    llmUserInput.disabled = false;
-                    llmUserInput.focus();
+                    finished = true;
+                    statusBarProgress.style.width = '100%';
+                    setTimeout(() => {
+                        statusBarProgress.style.transition = 'none';
+                        statusBarProgress.style.width = '0%';
+                        setTimeout(() => { statusBarProgress.style.transition = 'width 0.3s linear'; }, 50);
+                        llmSendButton.disabled = false;
+                        llmUserInput.disabled = false;
+                        llmUserInput.focus();
+                    }, 400);
                 }
             }
 

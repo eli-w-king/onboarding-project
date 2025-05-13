@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/elijahking/Library/CloudStorage/OneDrive-Microsoft/Documents/GitHub/onboarding-project/comprehensive-setup-guide.md/blender-mcp/src/blender_mcp/server.py", line 2, in <module>
+    from modelcontextprotocol.mcp.server.fastmcp import FastMCP, Context, Image
+ModuleNotFoundError: No module named 'modelcontextprotocol'
