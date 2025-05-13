@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/elijahking/Library/CloudStorage/OneDrive-Microsoft/Documents/GitHub/onboarding-project/blender-remote-script-server/remote_script_server.py", line 1, in <module>
+    import bpy
+ModuleNotFoundError: No module named 'bpy'

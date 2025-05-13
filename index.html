@@ -223,29 +223,17 @@
         .hidden {
             display: none !important;
         }
+
+        /* Full height for chat container */
+        .chat-container {
+            height: calc(100vh - 20px);
+        }
     </style>
 </head>
 <body>
-    <div style="background:#fff;padding:15px;box-shadow:0 2px 5px rgba(0,0,0,0.1);margin-bottom:10px;">
-        <strong>Blender MCP Bridge</strong><br>
-        <span style="color:#666;font-size:14px;">Enter Blender Python code below and send it directly to Blender via MCP.</span>
-    </div>
 
 
-    <div class="chat-container">
-        <div class="messages" id="messages">
-            <div class="message assistant">
-                Enter Blender Python code below and click Send. The code will be executed in Blender via MCP.
-            </div>
-        </div>
-        <div class="input-area">
-            <textarea id="user-input" placeholder="Type Blender Python code here..."></textarea>
-            <button id="send-button">Send</button>
-        </div>
-        <p class="status" id="status"></p>
-    </div>
-
-    <div class="chat-container" style="margin-top:40px;">
+    <div class="chat-container" style="margin-top:10px; height: calc(100vh - 20px);">
         <div class="messages" id="llm-messages">
             <div class="message assistant">
                 <b>LLM Agent:</b> Enter a natural language request below. The LLM will generate Blender Python code and execute it in Blender.<br>
@@ -261,12 +249,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Direct code chat
-            const userInput = document.getElementById('user-input');
-            const sendButton = document.getElementById('send-button');
-            const messagesContainer = document.getElementById('messages');
-            const statusElement = document.getElementById('status');
-
             // LLM agent chat
             const llmUserInput = document.getElementById('llm-user-input');
             const llmSendButton = document.getElementById('llm-send-button');
@@ -304,51 +286,6 @@
                 container.scrollTop = container.scrollHeight;
             }
 
-            // Direct code chat logic
-            async function sendMessage() {
-                const userMessageText = userInput.value.trim();
-                if (!userMessageText) return;
-                addMessageToUI(messagesContainer, 'user', userMessageText);
-                userInput.value = '';
-                sendButton.disabled = true;
-                userInput.disabled = true;
-                statusElement.textContent = 'Sending code to Blender MCP...';
-                try {
-                    const response = await fetch('http://localhost:3001/blender-mcp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ type: 'execute_code', params: { code: userMessageText } })
-                    });
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ error: { message: `HTTP error! status: ${response.status}` } }));
-                        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    let result = data.result || data.message || '[No response]';
-                    if (typeof result === 'object') {
-                        result = `<pre>${escapeHtml(JSON.stringify(result, null, 2))}</pre>`;
-                    }
-                    addMessageToUI(messagesContainer, 'assistant', result);
-                    statusElement.textContent = 'Ready.';
-                } catch (error) {
-                    console.error('Error fetching Blender MCP response:', error);
-                    statusElement.innerHTML = `<span class="error">Error: ${escapeHtml(error.message)}`;
-                    addMessageToUI(messagesContainer, 'assistant', `Sorry, I encountered an error: ${escapeHtml(error.message)}`);
-                } finally {
-                    sendButton.disabled = false;
-                    userInput.disabled = false;
-                    userInput.focus();
-                }
-            }
-
-            sendButton.addEventListener('click', sendMessage);
-            userInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
             // LLM agent chat logic
             async function sendLLMMessage() {
                 const userMessageText = llmUserInput.value.trim();
@@ -369,20 +306,27 @@
                         throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
                     }
                 const data = await response.json();
-                let code = data.code || '[No code generated]';
-                // Decode HTML entities if present in code
-                function decodeHtmlEntities(str) {
-                  return str.replace(/&#(\d+);/g, (m, n) => String.fromCharCode(n))
-                            .replace(/&quot;/g, '"')
-                            .replace(/&apos;/g, "'")
-                            .replace(/&lt;/g, '<')
-                            .replace(/&gt;/g, '>')
-                            .replace(/&amp;/g, '&');
+                // Always show the LLM's message field (for both code and non-code responses)
+                if (data.message) {
+                    addMessageToUI(llmMessagesContainer, 'assistant', data.message);
+                } else {
+                    // fallback for legacy/edge cases
+                    let code = data.code || '';
+                    let printMessage = null;
+                    let printMatch = code.match(/print\((['"])(.*?)\1\)/);
+                    if (printMatch && printMatch[2]) {
+                        printMessage = printMatch[2];
+                    }
+                    let blenderResult =
+                        printMessage ||
+                        data.blenderResult?.result ||
+                        data.blenderResult?.message ||
+                        data.blenderResult?.stdout ||
+                        data.blenderResult?.output ||
+                        data.result ||
+                        '[No response from Blender]';
+                    addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
                 }
-                const rawCode = decodeHtmlEntities(code);
-                let blenderResult = data.blenderResult?.result || data.blenderResult?.message || '[No response from Blender]';
-                addMessageToUI(llmMessagesContainer, 'assistant', `<b>Generated Blender Python code:</b><br><pre>${escapeHtml(rawCode)}</pre>`);
-                addMessageToUI(llmMessagesContainer, 'assistant', `<b>Blender result:</b><br>${escapeHtml(blenderResult)}`);
                 llmStatusElement.textContent = 'Ready.';
                 } catch (error) {
                     console.error('Error in LLM/Blender flow:', error);
