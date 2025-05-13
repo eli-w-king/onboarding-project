@@ -21,18 +21,87 @@
 
         .api-key-container {
             background-color: #ffffff;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 8px 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            border-radius: 4px;
+            flex-wrap: nowrap;
+            width: 100%;
+            min-height: 48px;
+        }
+        
+        @media (max-width: 600px) {
+            .api-key-container {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+            .api-key-container input {
+                min-width: 0;
+                font-size: 13px;
+                width: 100%;
+                padding: 12px 18px;
+                height: 44px;
+            }
         }
 
         .api-key-container input {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
+            width: 100%;
+            min-width: 0;
+            max-width: none;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 15px;
+            box-shadow: none;
+            transition: border-color 0.3s ease;
+            text-align: left;
+            box-sizing: border-box;
+            height: 36px;
+        }
+        }
+        
+        .api-key-container input::placeholder {
+            text-align: left;
+            color: #999;
+        }
+        
+        .api-key-container input:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+        }
+        
+        .api-key-link {
+            margin-left: 0;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        
+        .help-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #2196f3;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            margin: 0;
+        }
+        
+        .api-key-link:hover .help-icon {
+            background-color: #0b7dda;
+            transform: scale(1.1);
+            transition: all 0.2s ease;
         }
 
         .model-selector {
@@ -96,14 +165,13 @@
             position: sticky;
             bottom: 0;
             margin-top: auto;
+            width: 100%;
         }
 
         .input-status-bar {
-            max-width: 600px;
-            min-width: 220px;
             width: 100%;
             height: 4px;
-            margin: 0 auto 6px auto;
+            margin: 0 0 6px 0;
             background: #e3eaf3;
             border-radius: 2px;
             overflow: hidden;
@@ -347,13 +415,18 @@
         /* Responsive styles for mobile */
         @media (max-width: 768px) {
             .api-key-container {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+                padding: 8px 10px;
+                gap: 6px;
             }
             
             .api-key-container input {
-                width: 100%;
+                min-width: 140px;
+            }
+            
+            .help-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 10px;
             }
             
             .message {
@@ -366,6 +439,12 @@
             
             .input-area {
                 padding: 15px 0;
+                width: 100%;
+            }
+            
+            .input-status-bar {
+                width: 100%;
+                margin: 0 0 6px 0;
             }
         }
 
@@ -391,24 +470,23 @@
         }
         .input-area {
             position: relative;
+            width: 100%;
         }
     </style>
 </head>
 <body>
     <!-- API Key Update UI -->
     <div class="api-key-container">
-        <label for="api-key-input" style="font-weight:bold;">OpenRouter API Key:</label>
-        <input type="text" id="api-key-input" placeholder="Enter new API key..." autocomplete="off" />
-        <!-- Save Key button removed for minimal UI -->
-        <span id="api-key-status" class="status" style="display:flex;align-items:center;gap:6px;"><span id="api-key-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#aaa;"></span></span>
+        <input type="text" id="api-key-input" placeholder="Enter OpenRouter API key" autocomplete="off" />
+        <a href="https://openrouter.ai/docs/faq" target="_blank" class="api-key-link" title="How to get a key" style="display:flex;align-items:center;margin:0 0 0 8px;text-decoration:none;"><span class="help-icon" style="display:inline-flex;justify-content:center;align-items:center;width:15px;height:15px;font-size:11px;border-radius:50%;background:#e9e9e9;color:#555;box-shadow:0 1px 2px rgba(0,0,0,0.04);font-weight:500;letter-spacing:0.2px;text-decoration:none;">?</span></a>
+        <span id="api-key-status" style="display:flex;align-items:center;margin:0 0 0 12px;"><span id="api-key-dot" style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#aaa;"></span></span>
     </div>
 
-    <div id="chat-container" class="chat-container" style="margin-top:10px; height: calc(100vh - 70px); display: flex; flex-direction: column;">
+    <div id="chat-container" class="chat-container" style="margin-top:8px; height: calc(100vh - 60px); display: flex; flex-direction: column;">
         <div class="messages" id="llm-messages" style="flex-grow: 1; overflow-y: auto;">
             <!-- Welcome message removed -->
         </div>
-        <!-- Old progress bar removed, now replaced by full-width bar in input-area -->
-        <div class="input-status-bar" id="input-status-bar">
+        <div class="input-status-bar" id="input-status-bar" style="width:100%;">
             <div class="input-status-bar-progress" id="input-status-bar-progress"></div>
         </div>
         <div class="input-area">

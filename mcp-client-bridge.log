@@ -858,3 +858,127 @@ Direct JSON parsing succeeded
 }
 Attempting to parse LLM response JSON
 Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- OpenRouter API Error ---
+Status: 401 Unauthorized
+Error Body: {"error":{"message":"No auth credentials found","code":401}}
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747173472-k4ei3JIibtKYhWLwbeOQ",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747173472,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}",
+        "refusal": null,
+        "reasoning": "**Processing User Input Now**\n\nThe user's \"hello\" is definitely not a Blender command. Based on the instructions, the prompt is a statement, so the response should be friendly and encouraging for Blender use.\n\n \n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 105,
+    "total_tokens": 2668
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747174392-joiATzEECRb9vrh5dQ5n",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747174392,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Hello there! Ready to create something amazing in Blender today?\"\n}",
+        "refusal": null,
+        "reasoning": "**Analyzing Initial Query's Intent**\n\nHmm, \"hello\" indeed. The user's simple greeting isn't about Blender commands, as I expected. The instructions stress enthusiasm, then pivoting back to Blender! Let's do that.\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 78,
+    "total_tokens": 2641
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747174398-EJrF4tkUMgVAoo7ZKCGJ",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747174398,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}",
+        "refusal": null,
+        "reasoning": "**Processing User's Greeting**\n\nRight, the user's \"hello\" is just a greeting, and I need to respond accordingly. I'll mark this as a statement, as requested, and offer a friendly reply before nudging them toward a Blender command.\n\nI must respond with friendly message.\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 121,
+    "total_tokens": 2684
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747174747-6T7PHsLOt8TAOLposxQK",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747174747,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Hello there! Ready to create something amazing in Blender today?\"\n}",
+        "refusal": null,
+        "reasoning": "Thinking... \n\n**Analyzing the Query's Nature**\n\nThe user's \"hello\" is a simple greeting, as noted in their query. It's not a request for information or action, which I must consider.\n\n \n \n\n\n**Evaluating User Input Type**\n\nThe user's initial \"hello\" – as the query highlights – requires acknowledging its greeting nature. My core task is to determine if it's a request or simply a statement.\n \n\n \n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 108,
+    "total_tokens": 2671
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
