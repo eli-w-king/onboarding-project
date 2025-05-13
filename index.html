@@ -235,8 +235,8 @@
     <div class="api-key-container">
         <label for="api-key-input" style="font-weight:bold;">OpenRouter API Key:</label>
         <input type="text" id="api-key-input" placeholder="Enter new API key..." autocomplete="off" />
-        <button id="api-key-save-btn">Save Key</button>
-        <span id="api-key-status" class="status" style="display:flex;align-items:center;gap:6px;"><span id="api-key-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#aaa;"></span><span id="api-key-msg">Waiting for API key...</span></span>
+        <!-- Save Key button removed for minimal UI -->
+        <span id="api-key-status" class="status" style="display:flex;align-items:center;gap:6px;"><span id="api-key-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#aaa;"></span></span>
     </div>
 
     <div class="chat-container" style="margin-top:10px; height: calc(100vh - 20px);">
@@ -248,7 +248,12 @@
         </div>
         <div class="input-area">
             <textarea id="llm-user-input" placeholder="Type your Blender request in plain English..."></textarea>
-            <button id="llm-send-button">Ask LLM & Run</button>
+            <button id="llm-send-button" title="Send">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
         </div>
         <p class="status" id="llm-status"></p>
     </div>
@@ -257,52 +262,103 @@
         document.addEventListener('DOMContentLoaded', function() {
             // API Key update logic
             const apiKeyInput = document.getElementById('api-key-input');
-            const apiKeySaveBtn = document.getElementById('api-key-save-btn');
+            // Remove Save Key button from DOM and logic for minimal UI
+            // Save Key button logic fully removed for minimal UI
             const apiKeyStatus = document.getElementById('api-key-status');
             const apiKeyDot = document.getElementById('api-key-dot');
-            const apiKeyMsg = document.getElementById('api-key-msg');
 
-            function setApiKeyStatus(color, msg) {
+            function setApiKeyStatus(color) {
                 apiKeyDot.style.background = color;
-                apiKeyMsg.textContent = msg;
             }
 
             // Set initial state (gray dot)
-            setApiKeyStatus('#aaa', 'Waiting for API key...');
+            setApiKeyStatus('#aaa');
 
-            // Update dot to gray if input is empty
+            // Improved: Auto-connect and send hidden hello on valid API key
+            let apiKeyValid = false;
+            let apiKeyCheckTimeout = null;
+            let lastApiKey = '';
+            let helloSentForKey = {};
             apiKeyInput.addEventListener('input', function() {
-                if (!apiKeyInput.value.trim()) {
-                    setApiKeyStatus('#aaa', 'Waiting for API key...');
-                }
-            });
-
-            apiKeySaveBtn.addEventListener('click', async function() {
-                const apiKey = apiKeyInput.value.trim();
-                setApiKeyStatus('#aaa', 'Waiting for API key...');
-                if (!apiKey) {
-                    setApiKeyStatus('#aaa', 'Please enter an API key.');
+                const key = apiKeyInput.value.trim();
+                if (!key) {
+                    setApiKeyStatus('#aaa');
+                    apiKeyValid = false;
+                    lastApiKey = '';
+                    llmSendButton.disabled = true;
                     return;
                 }
-                apiKeySaveBtn.disabled = true;
-                setApiKeyStatus('#aaa', 'Saving...');
-                try {
-                    const response = await fetch('/api/update-api-key', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ apiKey })
-                    });
-                    const data = await response.json();
-                    if (response.ok && data.success) {
-                        setApiKeyStatus('#2ecc40', 'Success!'); // green dot
-                    } else {
-                        setApiKeyStatus('#d32f2f', data.error || 'Failed to update API key.'); // red dot
+                setApiKeyStatus('#aaa');
+                llmSendButton.disabled = true;
+                if (apiKeyCheckTimeout) clearTimeout(apiKeyCheckTimeout);
+                apiKeyCheckTimeout = setTimeout(async () => {
+                    try {
+                        // First, update the backend with the key (for bridge logic)
+                        const response = await fetch('/api/update-api-key', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ apiKey: key })
+                        });
+                        const data = await response.json();
+                        if (response.ok && data.success) {
+                            // Now, actually test the key by sending a real LLM request
+                            try {
+                                const helloResponse = await fetch('http://localhost:3002/llm-agent', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ prompt: 'hello', apiKey: key })
+                                });
+                                if (helloResponse.ok) {
+                                    const helloData = await helloResponse.json();
+                                    // Only set as valid if we get a real message back
+                                    if (helloData && helloData.message) {
+                                        setApiKeyStatus('#2ecc40');
+                                        apiKeyInput.type = 'password';
+                                        apiKeyValid = true;
+                                        llmSendButton.disabled = false;
+                                        // Only show hello if not already shown for this key
+                                        if (!helloSentForKey[key]) {
+                                            helloSentForKey[key] = true;
+                                            lastApiKey = key;
+                                            addMessageToUI(llmMessagesContainer, 'assistant', helloData.message);
+                                        }
+                                    } else {
+                                        setApiKeyStatus('#d32f2f');
+                                        apiKeyInput.type = 'text';
+                                        apiKeyValid = false;
+                                        lastApiKey = '';
+                                        llmSendButton.disabled = true;
+                                    }
+                                } else {
+                                    // LLM endpoint returned error (401, 403, etc)
+                                    setApiKeyStatus('#d32f2f');
+                                    apiKeyInput.type = 'text';
+                                    apiKeyValid = false;
+                                    lastApiKey = '';
+                                    llmSendButton.disabled = true;
+                                }
+                            } catch (e) {
+                                setApiKeyStatus('#d32f2f');
+                                apiKeyInput.type = 'text';
+                                apiKeyValid = false;
+                                lastApiKey = '';
+                                llmSendButton.disabled = true;
+                            }
+                        } else {
+                            setApiKeyStatus('#d32f2f');
+                            apiKeyInput.type = 'text';
+                            apiKeyValid = false;
+                            lastApiKey = '';
+                            llmSendButton.disabled = true;
+                        }
+                    } catch (err) {
+                        setApiKeyStatus('#d32f2f');
+                        apiKeyInput.type = 'text';
+                        apiKeyValid = false;
+                        lastApiKey = '';
+                        llmSendButton.disabled = true;
                     }
-                } catch (err) {
-                    setApiKeyStatus('#d32f2f', 'Network or server error.');
-                } finally {
-                    apiKeySaveBtn.disabled = false;
-                }
+                }, 400); // debounce
             });
             // LLM agent chat
             const llmUserInput = document.getElementById('llm-user-input');
