@@ -982,3 +982,97 @@ Direct JSON parsing succeeded
 }
 Attempting to parse LLM response JSON
 Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747174982-SgupQi6IHvUBrDLBT1py",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747174982,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello there! Ready to create something amazing in Blender today?\"\n}\n```",
+        "refusal": null,
+        "reasoning": "**Processing the Query's Intent**\n\n\"Hello,\" the user types. Instructions dictate a 'statement' designation, no code. I need a friendly message, maybe nudging them towards Blender again.\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 116,
+    "total_tokens": 2679
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- OpenRouter API Error ---
+Status: 401 Unauthorized
+Error Body: {"error":{"message":"No auth credentials found","code":401}}
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747175293-FkluzRw2SuAIw9WsMpUa",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747175293,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}",
+        "refusal": null,
+        "reasoning": "**Analyzing Initial Query Response**\n\nOkay, a simple \"hello\" from the user. Considering the instructions, my enthusiastic response should be brief, and then I'll steer back to Blender. Easy enough.\n\n \n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 77,
+    "total_tokens": 2640
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747175316-MO78UDrI3WQuBvnvHvbh",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747175316,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}\n```",
+        "refusal": null,
+        "reasoning": "**Assessing the Query's Intent**\n\nOkay, the user offered a simple \"hello,\" which clarifies that the input is a statement, as the prompt detailed. I'll set the appropriate type and craft a positive message. Let's get this conversation back to Blender!\n\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 159,
+    "total_tokens": 2722
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
