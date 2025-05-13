@@ -1,16 +1,16 @@
 Loaded environment variables from .env file
 Using OpenRouter API key: sk-or-v1-0...
 MCP client bridge listening on http://localhost:3002
-Server started at: 2025-05-13T17:23:37.676Z
+Server started at: 2025-05-13T18:51:55.283Z
 Blender MCP expected at: localhost:9876
 --- /llm-agent endpoint hit ---
 --- Raw OpenRouter API Response ---
 {
-  "id": "gen-1747157037-VBguOtie2S0RiyWJ3qcd",
+  "id": "gen-1747162341-m86XBBlY3Eo9pT8vFFum",
   "provider": "Google",
   "model": "google/gemini-2.5-flash-preview:thinking",
   "object": "chat.completion",
-  "created": 1747157037,
+  "created": 1747162341,
   "choices": [
     {
       "logprobs": null,
@@ -19,48 +19,28 @@ Blender MCP expected at: localhost:9876
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\n# Get all objects in the scene\\nall_objects = list(bpy.data.objects)\\n\\n# Remove each object\\nfor obj in all_objects:\\n    bpy.data.objects.remove(obj, do_unlink=True)\\n\\nprint(\\\"All objects cleared from the scene.\\\")\",\n  \"message\": \"All objects have been cleared from the scene. A fresh canvas awaits!\"\n}\n```",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello there! Ready to create something amazing in Blender today?\"\n}\n```",
         "refusal": null,
-        "reasoning": "**Calculating the Execution**\n\nOkay, removing all objects from the Blender scene, as requested. I'll grab each object from `bpy.data.objects` and use the proper `remove()` command with `do_unlink=True`. I will also formulate a JSON response including a `message` for clarity.\n\n \n \n\n\n"
+        "reasoning": "**Assessing the Greeting's Intent**\n\nOkay, the user offered a simple \"hello\". I recall their query wasn't about Blender. Per the instructions, I need to offer a warm response, then shift focus.\n\n  \n\n\n"
       }
     }
   ],
   "usage": {
-    "prompt_tokens": 2568,
-    "completion_tokens": 245,
-    "total_tokens": 2813
+    "prompt_tokens": 2563,
+    "completion_tokens": 134,
+    "total_tokens": 2697
   }
 }
 Attempting to parse LLM response JSON
 Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-
-# Get all objects in the scene
-all_objects = list(bpy.data.objects)
-
-# Remove each object
-for obj in all_objects:
-    bpy.data.objects.remove(obj, do_unlink=True)
-
-print("All objects cleared from the scene.")
-Post-sanitized code: import bpy
-
-# Get all objects in the scene
-all_objects = list(bpy.data.objects)
-
-# Remove each object
-for obj in all_objects:
-    bpy.data.objects.remove(obj, do_unlink=True)
-
-print("All objects cleared from the scene.")
 --- /llm-agent endpoint hit ---
 --- Raw OpenRouter API Response ---
 {
-  "id": "gen-1747157053-98RozqTCxWkIfjVye8ww",
+  "id": "gen-1747162352-ZZXM7DBga5k8w2EEAcwE",
   "provider": "Google",
   "model": "google/gemini-2.5-flash-preview:thinking",
   "object": "chat.completion",
-  "created": 1747157053,
+  "created": 1747162352,
   "choices": [
     {
       "logprobs": null,
@@ -69,1244 +49,16 @@ print("All objects cleared from the scene.")
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport math\\n\\n# Ensure we are in Object Mode\\nif bpy.context.object and bpy.context.object.mode != 'OBJECT':\\n    bpy.ops.object.mode_set(mode='OBJECT')\\n\\n# Create a new sphere mesh\\nbpy.ops.mesh.primitive_uv_sphere_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0))\\nsphere_obj = bpy.context.object\\n\\n# Scale the sphere to 10x10x10\\nsphere_obj.scale = (10, 10, 10)\\n\\n# Create a new material\\nred_material = bpy.data.materials.new(name=\\\"RedMaterial\\\")\\nred_material.use_nodes = True\\n\\n# Get the Principled BSDF node\\nprincipled_bsdf = red_material.node_tree.nodes.get(\\\"Principled BSDF\\\")\\n\\n# Set the base color to red (RGBA: 1.0, 0.0, 0.0, 1.0)\\nif principled_bsdf:\\n    principled_bsdf.inputs[\\\"Base Color\\\"].default_value = (1.0, 0.0, 0.0, 1.0)\\n\\n# Assign the material to the sphere\\nif sphere_obj.data.materials:\\n    sphere_obj.data.materials[0] = red_material\\nelse:\\n    sphere_obj.data.materials.append(red_material)\\n\\n# Link the object to the main collection (important for visibility)\\nmain_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\ntry:\\n    main_collection.objects.link(sphere_obj)\\nexcept Exception as e:\\n    print(f'Note: {e}') # Object might already be linked by creation op\\n\\n# Rename the object to reflect its state\\nsphere_obj.name = 'Red Sphere'\\n\\n# Set viewport shading to material preview to see the color\\nfor area in bpy.context.screen.areas:\\n    if area.type == 'VIEW_3D':\\n        for space in area.spaces:\\n            if space.type == 'VIEW_3D':\\n                space.shading.type = 'MATERIAL'\\n                break\\n        break\\n\\nprint(\\\"Created and colored a 10x10 red sphere.\\\")\",\n  \"message\": \"A striking 10x10 red sphere now graces the scene, ready for its role.\"\n}\n```",
+        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport mathutils\\n\\n# Create cube mesh data\\nmesh = bpy.data.meshes.new(\\\"CubeMesh\\\")\\n\\n# Define vertices, edges, and faces for a cube\\nverts = [\\n    mathutils.Vector((-1, -1, -1)),\\n    mathutils.Vector((-1, -1, 1)),\\n    mathutils.Vector((-1, 1, -1)),\\n    mathutils.Vector((-1, 1, 1)),\\n    mathutils.Vector((1, -1, -1)),\\n    mathutils.Vector((1, -1, 1)),\\n    mathutils.Vector((1, 1, -1)),\\n    mathutils.Vector((1, 1, 1))\\n]\\nedges = [\\n    (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3), (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7)\\n]\\nfaces = [\\n    (0, 1, 3, 2),\\n    (4, 6, 7, 5),\\n    (0, 4, 5, 1),\\n    (2, 3, 7, 6),\\n    (0, 2, 6, 4),\\n    (1, 5, 7, 3)\\n]\\n\\n# Assign data to mesh\\nmesh.from_pydata(verts, edges, faces)\\nmesh.update()\\n\\n# Create object from mesh\\nobj_name = \\\"Red Cube\\\"\\n# Ensure unique name\\nobj_base_name = obj_name\\ncount = 0\\nwhile bpy.data.objects.get(obj_name) is not None:\\n    count += 1\\n    obj_name = f\\\"{obj_base_name}.{count:03d}\\\"\\n\\nobj = bpy.data.objects.new(obj_name, mesh)\\n\\n# Link object to the scene collection\\nmain_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\ntry:\\n    main_collection.objects.link(obj)\\nexcept Exception as e:\\n    print(f'Note: {e}') # Handle cases where object might already be linked (e.g., if created via bpy.ops)\\n\\n# Create a red material\\nmat_name = \\\"RedMaterial\\\"\\nmat = bpy.data.materials.get(mat_name)\\nif mat is None:\\n    mat = bpy.data.materials.new(name=mat_name)\\n    mat.use_nodes = True\\n    # Get the Principled BSDF node\\n    principled_bsdf = mat.node_tree.nodes.get(\\\"Principled BSDF\\\")\\n    if principled_bsdf:\\n        # Set the base color to red (R, G, B, Alpha)\\n        principled_bsdf.inputs[\\\"Base Color\\\"].default_value = (1.0, 0.0, 0.0, 1.0)\\n\\n# Assign material to object\\nif obj.data.materials:\\n    obj.data.materials[0] = mat\\nelse:\\n    obj.data.materials.append(mat)\\n\\n# Optional: Set viewport shading to Material Preview to see the color\\nfor area in bpy.context.screen.areas:\\n    if area.type == 'VIEW_3D':\\n        for space in area.spaces:\\n            if space.type == 'VIEW_3D':\\n                space.shading.type = 'MATERIAL'\\n                break\\n        break\\n\\nprint(f\\\"Created and linked object '{obj.name}' with material '{mat.name}'.\\\")\",\n  \"message\": \"A striking red cube has been added to your scene, ready for your creative touch.\"\n}\n```",
         "refusal": null,
-        "reasoning": "Thinking... \n\n**Analyzing the Request**\n\nI'm now considering the user's goal: adding a sphere. Specifically, the user mentioned the sphere's *size*. Okay, I will need to figure out the best way to handle this within the scene.\n \n \n\n\n**Crafting the Implementation**\n\nOkay, the user's request specifies color and scale for the sphere. My plan is to instantiate the sphere, size it, color it, and then ensure it's correctly placed. Time to implement the steps, efficiently.\n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2572,
-    "completion_tokens": 798,
-    "total_tokens": 3370
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-import math
-
-# Ensure we are in Object Mode
-if bpy.context.object and bpy.context.object.mode != 'OBJECT':
-    bpy.ops.object.mode_set(mode='OBJECT')
-
-# Create a new sphere mesh
-bpy.ops.mesh.primitive_uv_sphere_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0))
-sphere_obj = bpy.context.object
-
-# Scale the sphere to 10x10x10
-sphere_obj.scale = (10, 10, 10)
-
-# Create a new material
-red_material = bpy.data.materials.new(name="RedMaterial")
-red_material.use_nodes = True
-
-# Get the Principled BSDF node
-principled_bsdf = red_material.node_tree.nodes.get("Principled BSDF")
-
-# Set the base color to red (RGBA: 1.0, 0.0, 0.0, 1.0)
-if principled_bsdf:
-    principled_bsdf.inputs["Base Color"].default_value = (1.0, 0.0, 0.0, 1.0)
-
-# Assign the material to the sphere
-if sphere_obj.data.materials:
-    sphere_obj.data.materials[0] = red_material
-else:
-    sphere_obj.data.materials.append(red_material)
-
-# Link the object to the main collection (important for visibility)
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(sphere_obj)
-except Exception as e:
-    print(f'Note: {e}') # Object might already be linked by creation op
-
-# Rename the object to reflect its state
-sphere_obj.name = 'Red Sphere'
-
-# Set viewport shading to material preview to see the color
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-                break
-        break
-
-print("Created and colored a 10x10 red sphere.")
-Post-sanitized code: import bpy
-import math
-
-# Ensure we are in Object Mode
-if bpy.context.object and bpy.context.object.mode != 'OBJECT':
-    bpy.ops.object.mode_set(mode='OBJECT')
-
-# Create a new sphere mesh
-bpy.ops.mesh.primitive_uv_sphere_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0))
-sphere_obj = bpy.context.object
-
-# Scale the sphere to 10x10x10
-sphere_obj.scale = (10, 10, 10)
-
-# Create a new material
-red_material = bpy.data.materials.new(name="RedMaterial")
-red_material.use_nodes = True
-
-# Get the Principled BSDF node
-principled_bsdf = red_material.node_tree.nodes.get("Principled BSDF")
-
-# Set the base color to red (RGBA: 1.0, 0.0, 0.0, 1.0)
-if principled_bsdf:
-    principled_bsdf.inputs["Base Color"].default_value = (1.0, 0.0, 0.0, 1.0)
-
-# Assign the material to the sphere
-if sphere_obj.data.materials:
-    sphere_obj.data.materials[0] = red_material
-else:
-    sphere_obj.data.materials.append(red_material)
-
-# Link the object to the main collection (important for visibility)
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(sphere_obj)
-except Exception as e:
-    print(f'Note: {e}') # Object might already be linked by creation op
-
-# Rename the object to reflect its state
-sphere_obj.name = 'Red Sphere'
-
-# Set viewport shading to material preview to see the color
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-                break
-        break
-
-print("Created and colored a 10x10 red sphere.")
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157069-KcLwLdi1WD91lJqUO1A1",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157069,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\nobj = bpy.data.objects.get('Sphere')\\n\\nif obj and obj.type == 'MESH':\\n    # Ensure the object has material slots\\n    if not obj.data.materials:\\n        obj.data.materials.append(None)\\n\\n    # Create or get the material\\n    mat_name = \\\"OrangeMaterial\\\"\\n    mat = bpy.data.materials.get(mat_name)\\n    if not mat:\\n        mat = bpy.data.materials.new(name=mat_name)\\n\\n    # Assign the material to the first slot\\n    obj.data.materials[0] = mat\\n\\n    # Use nodes for Cycles/Eevee\\n    mat.use_nodes = True\\n    principled_bsdf = None\\n    if mat.node_tree.nodes.get(\\\"Principled BSDF\\\"):\\n        principled_bsdf = mat.node_tree.nodes[\\\"Principled BSDF\\\"]\\n    else:\\n        # Clear existing nodes and create a new Principled BSDF\\n        mat.node_tree.nodes.clear()\\n        principled_bsdf = mat.node_tree.nodes.new('ShaderNodeBsdfPrincipled')\\n        mat.node_tree.links.new(principled_bsdf.outputs['BSDF'], mat.node_tree.nodes['Material Output'].inputs['Surface'])\\n\\n    # Set the base color to orange (RGBA)\\n    if principled_bsdf:\\n        principled_bsdf.inputs['Base Color'].default_value = (1.0, 0.5, 0.0, 1.0) # Orange color\\n\\n    # Rename the object to reflect the change\\n    obj.name = 'Orange Sphere'\\n\\n    # Set viewport shading to Material Preview to see the color\\n    for area in bpy.context.screen.areas:\\n        if area.type == 'VIEW_3D':\\n            for space in area.spaces:\\n                if space.type == 'VIEW_3D':\\n                    space.shading.type = 'MATERIAL'\\n                    break\\n            break\\n\\n    print(\\\"Sphere colored orange and renamed.\\\")\\nelse:\\n    print(\\\"No object named 'Sphere' found or it is not a mesh.\\\")\",\n  \"message\": \"The sphere is now a vibrant orange sphere.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Evaluating the Request**\n\nOkay, changing the color of 'Sphere' to orange. Simple enough. Let's make sure I understand the intricacies of the user's environment, and ensure I’m using the optimal methodology, considering the user's expertise.\n\n\n**Assessing the Process**\n\nOkay, the user wants 'Sphere' to be orange, as requested. Now I need to efficiently execute the color change, step-by-step, while accounting for their expertise and any possible environmental constraints. I need to ensure the object is found, verified, the orange material is used, and the result reflected in the viewport.\n\n \n\n\n"
+        "reasoning": "Thinking... \n\n**Constructing the Cube**\n\nOkay, let's start by creating a cube mesh, per the user's request to add a red cube. Utilizing `bpy.data.meshes.new` seems like the most logical first step.\n\n \n\n\n**Implementing the Red Cube**\n\nOkay, let's work through this list. The user needs a red cube, so I'll construct it with `bpy.data.meshes.new`, link it, and create the appropriate material. Then, I'll set the color, assign it, rename, and package it all up for a clean JSON response.\n\n \n\n\n"
       }
     }
   ],
   "usage": {
     "prompt_tokens": 2566,
-    "completion_tokens": 800,
-    "total_tokens": 3366
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-
-obj = bpy.data.objects.get('Sphere')
-
-if obj and obj.type == 'MESH':
-    # Ensure the object has material slots
-    if not obj.data.materials:
-        obj.data.materials.append(None)
-
-    # Create or get the material
-    mat_name = "OrangeMaterial"
-    mat = bpy.data.materials.get(mat_name)
-    if not mat:
-        mat = bpy.data.materials.new(name=mat_name)
-
-    # Assign the material to the first slot
-    obj.data.materials[0] = mat
-
-    # Use nodes for Cycles/Eevee
-    mat.use_nodes = True
-    principled_bsdf = None
-    if mat.node_tree.nodes.get("Principled BSDF"):
-        principled_bsdf = mat.node_tree.nodes["Principled BSDF"]
-    else:
-        # Clear existing nodes and create a new Principled BSDF
-        mat.node_tree.nodes.clear()
-        principled_bsdf = mat.node_tree.nodes.new('ShaderNodeBsdfPrincipled')
-        mat.node_tree.links.new(principled_bsdf.outputs['BSDF'], mat.node_tree.nodes['Material Output'].inputs['Surface'])
-
-    # Set the base color to orange (RGBA)
-    if principled_bsdf:
-        principled_bsdf.inputs['Base Color'].default_value = (1.0, 0.5, 0.0, 1.0) # Orange color
-
-    # Rename the object to reflect the change
-    obj.name = 'Orange Sphere'
-
-    # Set viewport shading to Material Preview to see the color
-    for area in bpy.context.screen.areas:
-        if area.type == 'VIEW_3D':
-            for space in area.spaces:
-                if space.type == 'VIEW_3D':
-                    space.shading.type = 'MATERIAL'
-                    break
-            break
-
-    print("Sphere colored orange and renamed.")
-else:
-    print("No object named 'Sphere' found or it is not a mesh.")
-Post-sanitized code: import bpy
-
-obj = bpy.data.objects.get('Sphere')
-
-if obj and obj.type == 'MESH':
-    # Ensure the object has material slots
-    if not obj.data.materials:
-        obj.data.materials.append(None)
-
-    # Create or get the material
-    mat_name = "OrangeMaterial"
-    mat = bpy.data.materials.get(mat_name)
-    if not mat:
-        mat = bpy.data.materials.new(name=mat_name)
-
-    # Assign the material to the first slot
-    obj.data.materials[0] = mat
-
-    # Use nodes for Cycles / Eevee
-    mat.use_nodes = True
-    principled_bsdf = None
-    if mat.node_tree.nodes.get("Principled BSDF"):
-        principled_bsdf = mat.node_tree.nodes["Principled BSDF"]
-    else:
-        # Clear existing nodes and create a new Principled BSDF
-        mat.node_tree.nodes.clear()
-        principled_bsdf = mat.node_tree.nodes.new('ShaderNodeBsdfPrincipled')
-        mat.node_tree.links.new(principled_bsdf.outputs['BSDF'], mat.node_tree.nodes['Material Output'].inputs['Surface'])
-
-    # Set the base color to orange (RGBA)
-    if principled_bsdf:
-        principled_bsdf.inputs['Base Color'].default_value = (1.0, 0.5, 0.0, 1.0) # Orange color
-
-    # Rename the object to reflect the change
-    obj.name = 'Orange Sphere'
-
-    # Set viewport shading to Material Preview to see the color
-    for area in bpy.context.screen.areas:
-        if area.type == 'VIEW_3D':
-            for space in area.spaces:
-                if space.type == 'VIEW_3D':
-                    space.shading.type = 'MATERIAL'
-                    break
-            break
-
-    print("Sphere colored orange and renamed.")
-else:
-    print("No object named 'Sphere' found or it is not a mesh.")
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157090-HEYaCBqajnbV3EjNSIGU",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157090,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nfrom mathutils import Vector\\n\\n# Find the 'Red Sphere'\\nred_sphere = bpy.data.objects.get('Red Sphere')\\n\\nif not red_sphere:\\n    # If 'Red Sphere' doesn't exist, just add a blue sphere at a default location\\n    print(\\\"Note: 'Red Sphere' not found. Adding blue sphere at default location.\\\")\\n    new_location = Vector((0, 0, 0))\\nelse:\\n    # Calculate position to the right of the 'Red Sphere'\\n    # Assuming default sphere radius is 1 unit\\n    spacing = 0.5\\n    new_x = red_sphere.location.x + red_sphere.dimensions.x / 2.0 + 1.0 + spacing\\n    new_location = Vector((new_x, red_sphere.location.y, red_sphere.location.z))\\n\\n# Create a new sphere mesh\\nbpy.ops.mesh.primitive_uv_sphere_add(radius=1.0, enter_editmode=False, align='WORLD', location=new_location)\\nobj = bpy.context.active_object\\n\\n# Rename the object, ensuring uniqueness\\nbase_name = \\\"Blue Sphere\\\"\\nobj.name = base_name\\ncount = 1\\nwhile bpy.data.objects.get(obj.name) != obj:\\n    obj.name = f\\\"{base_name}.{count:03d}\\\"\\n    count += 1\\n\\n# Create a new material\\nmat = bpy.data.materials.new(name=f\\\"{obj.name}_Material\\\")\\nmat.use_nodes = True\\n\\n# Get the Principled BSDF node\\nbsdf = mat.node_tree.nodes.get(\\\"Principled BSDF\\\")\\nif bsdf:\\n    # Set the base color to blue (R, G, B, Alpha)\\n    bsdf.inputs['Base Color'].default_value = (0.0, 0.0, 1.0, 1.0)\\n\\n# Assign the material to the object\\nif obj.data.materials:\\n    obj.data.materials[0] = mat\\nelse:\\n    obj.data.materials.append(mat)\\n\\n# Link the new object to the main collection\\nmain_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\ntry:\\n    main_collection.objects.link(obj)\\nexcept Exception as e:\\n    print(f'Note: Could not link object to default collection, it might already be linked. {e}')\\n\\n# Set viewport shading to Material Preview for better visibility\\nfor area in bpy.context.screen.areas:\\n    if area.type == 'VIEW_3D':\\n        for space in area.spaces:\\n            if space.type == 'VIEW_3D':\\n                space.shading.type = 'MATERIAL'\\n                break\\n        break\\n\\nprint(f\\\"Created and positioned '{obj.name}' to the right.\\\")\",\n  \"message\": \"A new blue sphere has been added, positioned elegantly to the right of the red sphere.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Analyzing the Request:**\n\nI'm considering the user's instruction; they're seeking to incorporate a sphere into the scene. A straightforward request, but the implications... are there any other constraints at play? I must check all conditions.\n\n\n \n\n\n**Assessing the Requirements' Impact:**\n\nAlright, I need to build a blue sphere, to the right of the Red Sphere, as the prompt indicates. I must ensure the original object exists before proceeding. I will check the dimensions to set the right placement.\n\n \n\n\n**Confirming the Steps**\n\nOkay, the user's request: Add a blue sphere to the right of \"Red Sphere\". I'll methodically check the existing object and calculate the placement, considering dimensions and spacing, using my prior expertise to craft the correct placement. A good first pass on steps.\n \n \n \n \n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2573,
-    "completion_tokens": 1230,
-    "total_tokens": 3803
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-from mathutils import Vector
-
-# Find the 'Red Sphere'
-red_sphere = bpy.data.objects.get('Red Sphere')
-
-if not red_sphere:
-    # If 'Red Sphere' doesn't exist, just add a blue sphere at a default location
-    print("Note: 'Red Sphere' not found. Adding blue sphere at default location.")
-    new_location = Vector((0, 0, 0))
-else:
-    # Calculate position to the right of the 'Red Sphere'
-    # Assuming default sphere radius is 1 unit
-    spacing = 0.5
-    new_x = red_sphere.location.x + red_sphere.dimensions.x / 2.0 + 1.0 + spacing
-    new_location = Vector((new_x, red_sphere.location.y, red_sphere.location.z))
-
-# Create a new sphere mesh
-bpy.ops.mesh.primitive_uv_sphere_add(radius=1.0, enter_editmode=False, align='WORLD', location=new_location)
-obj = bpy.context.active_object
-
-# Rename the object, ensuring uniqueness
-base_name = "Blue Sphere"
-obj.name = base_name
-count = 1
-while bpy.data.objects.get(obj.name) != obj:
-    obj.name = f"{base_name}.{count:03d}"
-    count += 1
-
-# Create a new material
-mat = bpy.data.materials.new(name=f"{obj.name}_Material")
-mat.use_nodes = True
-
-# Get the Principled BSDF node
-bsdf = mat.node_tree.nodes.get("Principled BSDF")
-if bsdf:
-    # Set the base color to blue (R, G, B, Alpha)
-    bsdf.inputs['Base Color'].default_value = (0.0, 0.0, 1.0, 1.0)
-
-# Assign the material to the object
-if obj.data.materials:
-    obj.data.materials[0] = mat
-else:
-    obj.data.materials.append(mat)
-
-# Link the new object to the main collection
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(obj)
-except Exception as e:
-    print(f'Note: Could not link object to default collection, it might already be linked. {e}')
-
-# Set viewport shading to Material Preview for better visibility
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-                break
-        break
-
-print(f"Created and positioned '{obj.name}' to the right.")
-Post-sanitized code: import bpy
-from mathutils import Vector
-
-# Find the 'Red Sphere'
-red_sphere = bpy.data.objects.get('Red Sphere')
-
-if not red_sphere:
-    # If 'Red Sphere' doesn't exist, just add a blue sphere at a default location
-    print("Note: 'Red Sphere' not found. Adding blue sphere at default location.")
-    new_location = Vector((0, 0, 0))
-else:
-    # Calculate position to the right of the 'Red Sphere'
-    # Assuming default sphere radius is 1 unit
-    spacing = 0.5
-    new_x = red_sphere.location.x + red_sphere.dimensions.x / 2.0 + 1.0 + spacing
-    new_location = Vector((new_x, red_sphere.location.y, red_sphere.location.z))
-
-# Create a new sphere mesh
-bpy.ops.mesh.primitive_uv_sphere_add(radius=1.0, enter_editmode=False, align='WORLD', location=new_location)
-obj = bpy.context.active_object
-
-# Rename the object, ensuring uniqueness
-base_name = "Blue Sphere"
-obj.name = base_name
-count = 1
-while bpy.data.objects.get(obj.name) != obj:
-    obj.name = f"{base_name}.{count:03d}"
-    count += 1
-
-# Create a new material
-mat = bpy.data.materials.new(name=f"{obj.name}_Material")
-mat.use_nodes = True
-
-# Get the Principled BSDF node
-bsdf = mat.node_tree.nodes.get("Principled BSDF")
-if bsdf:
-    # Set the base color to blue (R, G, B, Alpha)
-    bsdf.inputs['Base Color'].default_value = (0.0, 0.0, 1.0, 1.0)
-
-# Assign the material to the object
-if obj.data.materials:
-    obj.data.materials[0] = mat
-else:
-    obj.data.materials.append(mat)
-
-# Link the new object to the main collection
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(obj)
-except Exception as e:
-    print(f'Note: Could not link object to default collection, it might already be linked. {e}')
-
-# Set viewport shading to Material Preview for better visibility
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-                break
-        break
-
-print(f"Created and positioned '{obj.name}' to the right.")
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157124-5fiXTKVLvDLlDEV5q1Da",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157124,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport math\\n\\nred_sphere = bpy.data.objects.get('Red Sphere')\\nblue_sphere = bpy.data.objects.get('Blue Sphere')\\n\\nif not red_sphere or not blue_sphere:\\n    print(\\\"Error: Could not find both 'Red Sphere' and 'Blue Sphere'.\\\")\\n    message = \\\"Please ensure both 'Red Sphere' and 'Blue Sphere' objects exist in the scene.\\\"\\nelif red_sphere.type != 'MESH' or blue_sphere.type != 'MESH':\\n    print(\\\"Error: 'Red Sphere' and 'Blue Sphere' must be mesh objects.\\\")\\n    message = \\\"Please ensure both 'Red Sphere' and 'Blue Sphere' are mesh objects.\\\"\\nelse:\\n    # Create an Empty to use as the rotation pivot\\n    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)\\n    pivot_empty = bpy.context.active_object\\n    pivot_empty.name = 'Rotation_Pivot_Empty'\\n\\n    # Link the empty to the main collection\\n    main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\n    try:\\n        main_collection.objects.link(pivot_empty)\\n    except Exception as e:\\n        print(f'Note: {e}') # Handle cases where it might already be linked\\n\\n    # Parent the blue sphere to the empty\\n    # Ensure blue sphere is selected and empty is active for parenting operator\\n    bpy.ops.object.select_all(action='DESELECT')\\n    blue_sphere.select_set(True)\\n    bpy.context.view_layer.objects.active = pivot_empty\\n    bpy.ops.object.parent_set(type='OBJECT')\\n\\n    # Animate the empty's rotation\\n    scene = bpy.context.scene\\n    scene.frame_start = 1\\n    scene.frame_end = 100 # Animation over 100 frames\\n\\n    # Keyframe start rotation (0 degrees)\\n    scene.frame_set(scene.frame_start)\\n    pivot_empty.rotation_euler = (0, 0, 0)\\n    pivot_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_start) # Animate Z-axis rotation\\n\\n    # Keyframe end rotation (360 degrees = 2*pi radians)\\n    scene.frame_set(scene.frame_end)\\n    pivot_empty.rotation_euler = (0, 0, math.radians(360))\\n    pivot_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_end)\\n\\n    # Set interpolation to linear for constant speed\\n    fcurves = pivot_empty.animation_data.action.fcurves\\n    for fcurve in fcurves:\\n        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:\\n            for point in fcurve.keyframe_points:\\n                point.interpolation = 'LINEAR'\\n\\n    print(\\\"Animation setup complete: Blue Sphere now orbits Red Sphere.\\\")\\n    message = \\\"The Blue Sphere is now set to orbit the Red Sphere, creating a dynamic visual relationship.\\\"\\n\\nprint(message)\",\n  \"message\": \"Setting up the animation for the Blue Sphere to orbit the Red Sphere...\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Planning Animation's Flow**\n\nAlright, I'm considering the user's request for a spinning 'Blue Sphere' around a 'Red Sphere'. I'll need to figure out the most efficient animation process for that movement and look at potential bottlenecks.\n\n\n**Confirming the Object's Positions**\n\nOkay, the user has asked for a rotating sphere.  Now, checking the positions of the 'Red Sphere' and 'Blue Sphere' is the next step. Specifically, making sure that the 'Red Sphere' is the center of the rotation, before proceeding.\n\n \n\n\n**Organizing Animation's Steps**\n\nOkay, the user wants a rotation of the 'Blue Sphere'. My focus is now on the necessary steps to achieve this, including object retrieval, error checks for mesh types, and setting up parenting. I need to ensure the 'Blue Sphere' stays in place around the 'Red Sphere'.\n\n \n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2572,
-    "completion_tokens": 1494,
-    "total_tokens": 4066
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-import math
-
-red_sphere = bpy.data.objects.get('Red Sphere')
-blue_sphere = bpy.data.objects.get('Blue Sphere')
-
-if not red_sphere or not blue_sphere:
-    print("Error: Could not find both 'Red Sphere' and 'Blue Sphere'.")
-    message = "Please ensure both 'Red Sphere' and 'Blue Sphere' objects exist in the scene."
-elif red_sphere.type != 'MESH' or blue_sphere.type != 'MESH':
-    print("Error: 'Red Sphere' and 'Blue Sphere' must be mesh objects.")
-    message = "Please ensure both 'Red Sphere' and 'Blue Sphere' are mesh objects."
-else:
-    # Create an Empty to use as the rotation pivot
-    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)
-    pivot_empty = bpy.context.active_object
-    pivot_empty.name = 'Rotation_Pivot_Empty'
-
-    # Link the empty to the main collection
-    main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-    try:
-        main_collection.objects.link(pivot_empty)
-    except Exception as e:
-        print(f'Note: {e}') # Handle cases where it might already be linked
-
-    # Parent the blue sphere to the empty
-    # Ensure blue sphere is selected and empty is active for parenting operator
-    bpy.ops.object.select_all(action='DESELECT')
-    blue_sphere.select_set(True)
-    bpy.context.view_layer.objects.active = pivot_empty
-    bpy.ops.object.parent_set(type='OBJECT')
-
-    # Animate the empty's rotation
-    scene = bpy.context.scene
-    scene.frame_start = 1
-    scene.frame_end = 100 # Animation over 100 frames
-
-    # Keyframe start rotation (0 degrees)
-    scene.frame_set(scene.frame_start)
-    pivot_empty.rotation_euler = (0, 0, 0)
-    pivot_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_start) # Animate Z-axis rotation
-
-    # Keyframe end rotation (360 degrees = 2*pi radians)
-    scene.frame_set(scene.frame_end)
-    pivot_empty.rotation_euler = (0, 0, math.radians(360))
-    pivot_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_end)
-
-    # Set interpolation to linear for constant speed
-    fcurves = pivot_empty.animation_data.action.fcurves
-    for fcurve in fcurves:
-        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:
-            for point in fcurve.keyframe_points:
-                point.interpolation = 'LINEAR'
-
-    print("Animation setup complete: Blue Sphere now orbits Red Sphere.")
-    message = "The Blue Sphere is now set to orbit the Red Sphere, creating a dynamic visual relationship."
-
-print(message)
-Post-sanitized code: import bpy
-import math
-
-red_sphere = bpy.data.objects.get('Red Sphere')
-blue_sphere = bpy.data.objects.get('Blue Sphere')
-
-if not red_sphere or not blue_sphere:
-    print("Error: Could not find both 'Red Sphere' and 'Blue Sphere'.")
-    message = "Please ensure both 'Red Sphere' and 'Blue Sphere' objects exist in the scene."
-elif red_sphere.type != 'MESH' or blue_sphere.type != 'MESH':
-    print("Error: 'Red Sphere' and 'Blue Sphere' must be mesh objects.")
-    message = "Please ensure both 'Red Sphere' and 'Blue Sphere' are mesh objects."
-else:
-    # Create an Empty to use as the rotation pivot
-    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)
-    pivot_empty = bpy.context.active_object
-    pivot_empty.name = 'Rotation_Pivot_Empty'
-
-    # Link the empty to the main collection
-    main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-    try:
-        main_collection.objects.link(pivot_empty)
-    except Exception as e:
-        print(f'Note: {e}') # Handle cases where it might already be linked
-
-    # Parent the blue sphere to the empty
-    # Ensure blue sphere is selected and empty is active for parenting operator
-    bpy.ops.object.select_all(action='DESELECT')
-    blue_sphere.select_set(True)
-    bpy.context.view_layer.objects.active = pivot_empty
-    bpy.ops.object.parent_set(type='OBJECT')
-
-    # Animate the empty's rotation
-    scene = bpy.context.scene
-    scene.frame_start = 1
-    scene.frame_end = 100 # Animation over 100 frames
-
-    # Keyframe start rotation (0 degrees)
-    scene.frame_set(scene.frame_start)
-    pivot_empty.rotation_euler = (0, 0, 0)
-    pivot_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_start) # Animate Z - axis rotation
-
-    # Keyframe end rotation (360 degrees = 2 * pi radians)
-    scene.frame_set(scene.frame_end)
-    pivot_empty.rotation_euler = (0, 0, math.radians(360))
-    pivot_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_end)
-
-    # Set interpolation to linear for constant speed
-    fcurves = pivot_empty.animation_data.action.fcurves
-    for fcurve in fcurves:
-        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:
-            for point in fcurve.keyframe_points:
-                point.interpolation = 'LINEAR'
-
-    print("Animation setup complete: Blue Sphere now orbits Red Sphere.")
-    message = "The Blue Sphere is now set to orbit the Red Sphere, creating a dynamic visual relationship."
-
-print(message)
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157182-HeYJnRDcS15fFcCgPVfw",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157182,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nfrom mathutils import Vector\\n\\n# Find existing spheres\\nred_sphere = bpy.data.objects.get('Red Sphere')\\nblue_sphere = bpy.data.objects.get('Blue Sphere')\\n\\n# Determine location relative to red sphere\\nlocation = Vector((3.0, 0.0, 0.0)) # Default location\\nif red_sphere:\\n    # Calculate position to the right of the red sphere\\n    # Estimate radius based on average scale\\n    red_radius = max(red_sphere.scale) * 0.5 # Assuming default sphere radius is 1\\n    # Estimate new sphere radius (will be larger than blue, default 1.5)\\n    new_sphere_radius_est = 1.5 * 0.5 # Assuming default sphere radius is 1\\n    if blue_sphere:\\n        new_sphere_radius_est = max(blue_sphere.scale) * 1.5 * 0.5\\n\\n    # Position to the right, adding padding\\n    location = red_sphere.location + Vector((red_radius + new_sphere_radius_est + 0.5, 0.0, 0.0))\\n\\n# Determine scale relative to blue sphere\\nscale = Vector((1.5, 1.5, 1.5)) # Default scale\\nif blue_sphere:\\n    # Scale up the blue sphere's dimensions\\n    scale_factor = 1.5 # Make it 1.5 times larger\\n    scale = blue_sphere.scale * scale_factor\\n\\n# Create a new sphere\\nbpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(0, 0, 0))\\nnew_sphere = bpy.context.object\\n\\n# Ensure unique name\\nbase_name = \\\"Green Sphere\\\"\\nnew_sphere.name = base_name\\n\\n# Set location and scale\\nnew_sphere.location = location\\nnew_sphere.scale = scale\\n\\n# Create or get the green material\\nmat_name = \\\"Green Material\\\"\\nmat = bpy.data.materials.get(mat_name)\\nif not mat:\\n    mat = bpy.data.materials.new(name=mat_name)\\n    mat.use_nodes = True\\n    # Set green color using Principled BSDF\\n    if mat.node_tree.nodes.get('Principled BSDF'):\\n        principled_bsdf = mat.node_tree.nodes['Principled BSDF']\\n        principled_bsdf.inputs['Base Color'].default_value = (0.0, 1.0, 0.0, 1.0) # RGBA green\\n\\n# Assign material to the sphere\\nif new_sphere.data.materials:\\n    new_sphere.data.materials[0] = mat\\nelse:\\n    new_sphere.data.materials.append(mat)\\n\\n# Link to the main collection\\nmain_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\ntry:\\n    main_collection.objects.link(new_sphere)\\nexcept Exception as e:\\n    print(f'Note: {e}') # Object might already be linked if created in the collection\\n\\n# Set viewport shading to Material for visibility\\nfor area in bpy.context.screen.areas:\\n    if area.type == 'VIEW_3D':\\n        for space in area.spaces:\\n            if space.type == 'VIEW_3D':\\n                space.shading.type = 'MATERIAL'\\n\\nprint(f\\\"Created {new_sphere.name} at {tuple(new_sphere.location)} with scale {tuple(new_sphere.scale)} and assigned {mat.name}.\\\")\",\n  \"message\": \"A new green sphere has been added, positioned to the right of the red sphere and scaled larger than the blue sphere. Observe its vibrant presence in the scene!\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Evaluating the Query's Intent**\n\nHmm, a green sphere, that's the user's new request. Considering the specifications, it's a straightforward addition.\nI'll need to ensure it integrates smoothly into the existing framework. \n\n\n\n**Implementing the New Sphere**\n\nOkay, the user wants a green sphere! I'm tackling the specifics - color, size relative to the blue sphere, and position relative to the red sphere, as requested in the query.  Gotta ensure everything's correct.\n\n***\n\n\n**Analyzing New Object's Specs**\n\nAlright, the user wants a green sphere, bigger than blue, right of the red one. I'm breaking down the requirements: size based on the blue sphere, position relative to the red, and of course, the green color. Ensuring a smooth addition!\n\n***\n\n\n**Formulating the Implementation Plan**\n\nRight, the user wants a green sphere, bigger than blue, to the right of red. I'll get the blue sphere's size, position based on red, create the mesh, assign the green material. Gotta handle missing objects and finalize the response.\n\n***\n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2581,
-    "completion_tokens": 1645,
-    "total_tokens": 4226
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-from mathutils import Vector
-
-# Find existing spheres
-red_sphere = bpy.data.objects.get('Red Sphere')
-blue_sphere = bpy.data.objects.get('Blue Sphere')
-
-# Determine location relative to red sphere
-location = Vector((3.0, 0.0, 0.0)) # Default location
-if red_sphere:
-    # Calculate position to the right of the red sphere
-    # Estimate radius based on average scale
-    red_radius = max(red_sphere.scale) * 0.5 # Assuming default sphere radius is 1
-    # Estimate new sphere radius (will be larger than blue, default 1.5)
-    new_sphere_radius_est = 1.5 * 0.5 # Assuming default sphere radius is 1
-    if blue_sphere:
-        new_sphere_radius_est = max(blue_sphere.scale) * 1.5 * 0.5
-
-    # Position to the right, adding padding
-    location = red_sphere.location + Vector((red_radius + new_sphere_radius_est + 0.5, 0.0, 0.0))
-
-# Determine scale relative to blue sphere
-scale = Vector((1.5, 1.5, 1.5)) # Default scale
-if blue_sphere:
-    # Scale up the blue sphere's dimensions
-    scale_factor = 1.5 # Make it 1.5 times larger
-    scale = blue_sphere.scale * scale_factor
-
-# Create a new sphere
-bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(0, 0, 0))
-new_sphere = bpy.context.object
-
-# Ensure unique name
-base_name = "Green Sphere"
-new_sphere.name = base_name
-
-# Set location and scale
-new_sphere.location = location
-new_sphere.scale = scale
-
-# Create or get the green material
-mat_name = "Green Material"
-mat = bpy.data.materials.get(mat_name)
-if not mat:
-    mat = bpy.data.materials.new(name=mat_name)
-    mat.use_nodes = True
-    # Set green color using Principled BSDF
-    if mat.node_tree.nodes.get('Principled BSDF'):
-        principled_bsdf = mat.node_tree.nodes['Principled BSDF']
-        principled_bsdf.inputs['Base Color'].default_value = (0.0, 1.0, 0.0, 1.0) # RGBA green
-
-# Assign material to the sphere
-if new_sphere.data.materials:
-    new_sphere.data.materials[0] = mat
-else:
-    new_sphere.data.materials.append(mat)
-
-# Link to the main collection
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(new_sphere)
-except Exception as e:
-    print(f'Note: {e}') # Object might already be linked if created in the collection
-
-# Set viewport shading to Material for visibility
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-
-print(f"Created {new_sphere.name} at {tuple(new_sphere.location)} with scale {tuple(new_sphere.scale)} and assigned {mat.name}.")
-Post-sanitized code: import bpy
-from mathutils import Vector
-
-# Find existing spheres
-red_sphere = bpy.data.objects.get('Red Sphere')
-blue_sphere = bpy.data.objects.get('Blue Sphere')
-
-# Determine location relative to red sphere
-location = Vector((3.0, 0.0, 0.0)) # Default location
-if red_sphere:
-    # Calculate position to the right of the red sphere
-    # Estimate radius based on average scale
-    red_radius = max(red_sphere.scale) * 0.5 # Assuming default sphere radius is 1
-    # Estimate new sphere radius (will be larger than blue, default 1.5)
-    new_sphere_radius_est = 1.5 * 0.5 # Assuming default sphere radius is 1
-    if blue_sphere:
-        new_sphere_radius_est = max(blue_sphere.scale) * 1.5 * 0.5
-
-    # Position to the right, adding padding
-    location = red_sphere.location + Vector((red_radius + new_sphere_radius_est + 0.5, 0.0, 0.0))
-
-# Determine scale relative to blue sphere
-scale = Vector((1.5, 1.5, 1.5)) # Default scale
-if blue_sphere:
-    # Scale up the blue sphere's dimensions
-    scale_factor = 1.5 # Make it 1.5 times larger
-    scale = blue_sphere.scale * scale_factor
-
-# Create a new sphere
-bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(0, 0, 0))
-new_sphere = bpy.context.object
-
-# Ensure unique name
-base_name = "Green Sphere"
-new_sphere.name = base_name
-
-# Set location and scale
-new_sphere.location = location
-new_sphere.scale = scale
-
-# Create or get the green material
-mat_name = "Green Material"
-mat = bpy.data.materials.get(mat_name)
-if not mat:
-    mat = bpy.data.materials.new(name=mat_name)
-    mat.use_nodes = True
-    # Set green color using Principled BSDF
-    if mat.node_tree.nodes.get('Principled BSDF'):
-        principled_bsdf = mat.node_tree.nodes['Principled BSDF']
-        principled_bsdf.inputs['Base Color'].default_value = (0.0, 1.0, 0.0, 1.0) # RGBA green
-
-# Assign material to the sphere
-if new_sphere.data.materials:
-    new_sphere.data.materials[0] = mat
-else:
-    new_sphere.data.materials.append(mat)
-
-# Link to the main collection
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(new_sphere)
-except Exception as e:
-    print(f'Note: {e}') # Object might already be linked if created in the collection
-
-# Set viewport shading to Material for visibility
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-
-print(f"Created {new_sphere.name} at {tuple(new_sphere.location)} with scale {tuple(new_sphere.scale)} and assigned {mat.name}.")
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157222-qIuMptIXJ0i0MLshn8dZ",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157222,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\nobj_name = 'Green Sphere'\\nobj = bpy.data.objects.get(obj_name)\\n\\nif obj and obj.type == 'MESH':\\n    # Move the object down by 1 unit\\n    obj.location.z -= 1.0\\n    print(f\\\"Moved object '{obj_name}' down.\\\")\\n    message = f\\\"The '{obj_name}' has been moved downwards. A subtle shift for a clear design.\\\"\\nelif obj:\\n    message = f\\\"Found object '{obj_name}', but it is not a mesh type. Cannot move it.\\\"\\nelse:\\n    message = f\\\"Object '{obj_name}' not found. Please ensure the object exists and is named correctly.\\\"\\n\",\n  \"message\": \"Attempting to move the 'Green Sphere' downwards. Precision in placement defines the scene.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Defining the Action Needed**\n\nI must first identify what the user means by \"move downwards\" for the Green Sphere. Is it a simple translation, or does the user want something more complex, like a physics simulation? I will check the system's capabilities.\n\n \n\n\n**Confirming Object Location**\n\nI am verifying the existence of the \"Green Sphere\" and its type from the user's request. I need to ensure it's a mesh or moveable, then I'll use Python and modify the Z-axis to move it downwards. Then I will assemble the JSON response.\n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2567,
-    "completion_tokens": 399,
-    "total_tokens": 2966
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-
-obj_name = 'Green Sphere'
-obj = bpy.data.objects.get(obj_name)
-
-if obj and obj.type == 'MESH':
-    # Move the object down by 1 unit
-    obj.location.z -= 1.0
-    print(f"Moved object '{obj_name}' down.")
-    message = f"The '{obj_name}' has been moved downwards. A subtle shift for a clear design."
-elif obj:
-    message = f"Found object '{obj_name}', but it is not a mesh type. Cannot move it."
-else:
-    message = f"Object '{obj_name}' not found. Please ensure the object exists and is named correctly."
-Post-sanitized code: import bpy
-
-obj_name = 'Green Sphere'
-obj = bpy.data.objects.get(obj_name)
-
-if obj and obj.type == 'MESH':
-    # Move the object down by 1 unit
-    obj.location.z -= 1.0
-    print(f"Moved object '{obj_name}' down.")
-    message = f"The '{obj_name}' has been moved downwards. A subtle shift for a clear design."
-elif obj:
-    message = f"Found object '{obj_name}', but it is not a mesh type. Cannot move it."
-else:
-    message = f"Object '{obj_name}' not found. Please ensure the object exists and is named correctly."
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157230-Ly6zo61cj0n2qLL7tU8A",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157230,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\nobj = bpy.context.active_object\\n\\nif obj:\\n    # Move the object down along the Z-axis\\n    obj.location.z -= 1.0\\n    print(f\\\"Moved object '{obj.name}' down by 1 unit.\\\")\\n    message = f\\\"The object '{obj.name}' has been moved further down.\\\"\\nelse:\\n    message = \\\"Please select an object to move it down.\\\"\\n\\n\",\n  \"message\": \"The active object has been moved further down.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Analyzing the Command:**\n\nOkay, let's see... the user wants to *move* the active object downwards. First, I need to isolate that active element. That's the starting point.\n\n \n \n\n\n**Evaluating the Instructions Now**\n\nOkay, I'm moving the active object down, per the user's instructions. First, I confirm I *have* an active object. Then, a Z-axis translation, -1 unit. Finally, I'll update the object's position properties and confirm the adjustment.\n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2566,
-    "completion_tokens": 246,
-    "total_tokens": 2812
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-
-obj = bpy.context.active_object
-
-if obj:
-    # Move the object down along the Z-axis
-    obj.location.z -= 1.0
-    print(f"Moved object '{obj.name}' down by 1 unit.")
-    message = f"The object '{obj.name}' has been moved further down."
-else:
-    message = "Please select an object to move it down."
-Post-sanitized code: import bpy
-
-obj = bpy.context.active_object
-
-if obj:
-    # Move the object down along the Z - axis
-    obj.location.z -= 1.0
-    print(f"Moved object '{obj.name}' down by 1 unit.")
-    message = f"The object '{obj.name}' has been moved further down."
-else:
-    message = "Please select an object to move it down."
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157241-QO1bXkP2Q8pZknj4T5jp",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157241,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nfrom mathutils import Vector\\n\\nobj = bpy.context.active_object\\n\\nif obj:\\n    # Move the object along the positive X-axis (right)\\n    obj.location += Vector((10.0, 0.0, 0.0))\\n    print(f\\\"Moved object '{obj.name}' 10 units to the right.\\\")\\n    message = f\\\"Moved '{obj.name}' 10 units to the right. A precise adjustment for its position.\\\"\\nelse:\\n    message = \\\"No active object found to move. Please select an object.\\\"\\n\\n\",\n  \"message\": \"Moved the active object 10 units to the right. A precise adjustment for its position.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Evaluating the Shift Request**\n\nOkay, the user wants a rightward movement of 10 units, considering their expertise. That's simple enough, but the precision is important.\n\n\n**Parsing the User's Instruction**\n\nAlright, I see the user wants to shift the active object based on their request. I need to formulate this into a Blender command. Focusing on the 'rightward movement', I must ensure I'm understanding the axes correctly.\n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2571,
-    "completion_tokens": 453,
-    "total_tokens": 3024
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-from mathutils import Vector
-
-obj = bpy.context.active_object
-
-if obj:
-    # Move the object along the positive X-axis (right)
-    obj.location += Vector((10.0, 0.0, 0.0))
-    print(f"Moved object '{obj.name}' 10 units to the right.")
-    message = f"Moved '{obj.name}' 10 units to the right. A precise adjustment for its position."
-else:
-    message = "No active object found to move. Please select an object."
-Post-sanitized code: import bpy
-from mathutils import Vector
-
-obj = bpy.context.active_object
-
-if obj:
-    # Move the object along the positive X - axis (right)
-    obj.location += Vector((10.0, 0.0, 0.0))
-    print(f"Moved object '{obj.name}' 10 units to the right.")
-    message = f"Moved '{obj.name}' 10 units to the right. A precise adjustment for its position."
-else:
-    message = "No active object found to move. Please select an object."
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157259-QtH3JrhCXIhweax7w6cY",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157259,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport math\\n\\n# Find the objects\\ngreen_sphere = bpy.data.objects.get('Green Sphere')\\nred_sphere = bpy.data.objects.get('Red Sphere')\\n\\n# Get the main collection\\nmain_collection = bpy.context.scene.collection.children.get('Collection')\\nif not main_collection:\\n    main_collection = bpy.context.scene.collection\\n\\nif green_sphere and red_sphere:\\n    # Ensure objects are visible\\n    if green_sphere.name not in main_collection.objects:\\n        try: main_collection.objects.link(green_sphere) except Exception as e: print(f'Note: {e}')\\n    if red_sphere.name not in main_collection.objects:\\n        try: main_collection.objects.link(red_sphere) except Exception as e: print(f'Note: {e}')\\n\\n    # Create an empty object at the red sphere's location\\n    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)\\n    orbit_empty = bpy.context.active_object\\n    orbit_empty.name = 'Orbit_Empty'\\n    \\n    # Link the empty to the collection\\n    if orbit_empty.name not in main_collection.objects:\\n         try: main_collection.objects.link(orbit_empty) except Exception as e: print(f'Note: {e}')\\n\\n    # Parent the green sphere to the empty\\n    green_sphere.parent = orbit_empty\\n\\n    # Set up animation\\n    scene = bpy.context.scene\\n    scene.frame_start = 1\\n    scene.frame_end = 100 # Animation over 100 frames\\n\\n    # Animate the empty's rotation\\n    orbit_empty.rotation_euler = (0, 0, 0)\\n    scene.frame_set(scene.frame_start)\\n    orbit_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_start) # Keyframe Z rotation\\n\\n    orbit_empty.rotation_euler = (0, 0, math.radians(360)) # Rotate 360 degrees\\n    scene.frame_set(scene.frame_end)\\n    orbit_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_end) # Keyframe Z rotation\\n\\n    # Set interpolation to linear for constant speed\\n    fcurves = orbit_empty.animation_data.action.fcurves\\n    for fcurve in fcurves:\\n        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:\\n            for kp in fcurve.keyframe_points:\\n                kp.interpolation = 'LINEAR'\\n\\n    # Set viewport shading to material for visibility\\n    for area in bpy.context.screen.areas:\\n        if area.type == 'VIEW_3D':\\n            for space in area.spaces:\\n                if space.type == 'VIEW_3D':\\n                    space.shading.type = 'MATERIAL'\\n                    break\\n            break\\n\\n    print(\\\"Animation setup complete: Green Sphere orbiting Red Sphere.\\\")\\nelse:\\n    if not green_sphere:\\n        print(\\\"Error: 'Green Sphere' object not found.\\\")\\n    if not red_sphere:\\n        print(\\\"Error: 'Red Sphere' object not found.\\\")\\n\",\n  \"message\": \"The Green Sphere is now set to gracefully orbit the Red Sphere, guided by an invisible helper object. Press Play to see the motion!\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Animating Sphere Orbits**\n\nOkay, animating a 'Green Sphere' around a 'Red Sphere' is the core of the user's query. I need to consider the best approach for a smooth, realistic orbital path, ensuring it aligns with physics principles.\n\n\n**Considering Constraint Choices**\n\nThe user's request is to animate a 'Green Sphere' orbiting a 'Red Sphere'. Exploring options: Constraints are worth considering, specifically 'Child Of' or 'Follow Path'. But I think direct rotation of an Empty parented to the 'Green Sphere' will give me the most control, keeping it all clean and logical.\n\n \n\n\n**Confirming Orbital Method**\n\nThe user's 'Green Sphere' and 'Red Sphere' are found, so parenting the 'Green Sphere' to an Empty is the selected path. I must now meticulously create the Empty at the right location, then parent the 'Green Sphere' to it, finally rotating the Empty. And consider what to do in case the user's objects aren't there!\n\n \n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2572,
-    "completion_tokens": 1391,
-    "total_tokens": 3963
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-import math
-
-# Find the objects
-green_sphere = bpy.data.objects.get('Green Sphere')
-red_sphere = bpy.data.objects.get('Red Sphere')
-
-# Get the main collection
-main_collection = bpy.context.scene.collection.children.get('Collection')
-if not main_collection:
-    main_collection = bpy.context.scene.collection
-
-if green_sphere and red_sphere:
-    # Ensure objects are visible
-    if green_sphere.name not in main_collection.objects:
-        try: main_collection.objects.link(green_sphere) except Exception as e: print(f'Note: {e}')
-    if red_sphere.name not in main_collection.objects:
-        try: main_collection.objects.link(red_sphere) except Exception as e: print(f'Note: {e}')
-
-    # Create an empty object at the red sphere's location
-    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)
-    orbit_empty = bpy.context.active_object
-    orbit_empty.name = 'Orbit_Empty'
-
-    # Link the empty to the collection
-    if orbit_empty.name not in main_collection.objects:
-         try: main_collection.objects.link(orbit_empty) except Exception as e: print(f'Note: {e}')
-
-    # Parent the green sphere to the empty
-    green_sphere.parent = orbit_empty
-
-    # Set up animation
-    scene = bpy.context.scene
-    scene.frame_start = 1
-    scene.frame_end = 100 # Animation over 100 frames
-
-    # Animate the empty's rotation
-    orbit_empty.rotation_euler = (0, 0, 0)
-    scene.frame_set(scene.frame_start)
-    orbit_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_start) # Keyframe Z rotation
-
-    orbit_empty.rotation_euler = (0, 0, math.radians(360)) # Rotate 360 degrees
-    scene.frame_set(scene.frame_end)
-    orbit_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_end) # Keyframe Z rotation
-
-    # Set interpolation to linear for constant speed
-    fcurves = orbit_empty.animation_data.action.fcurves
-    for fcurve in fcurves:
-        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:
-            for kp in fcurve.keyframe_points:
-                kp.interpolation = 'LINEAR'
-
-    # Set viewport shading to material for visibility
-    for area in bpy.context.screen.areas:
-        if area.type == 'VIEW_3D':
-            for space in area.spaces:
-                if space.type == 'VIEW_3D':
-                    space.shading.type = 'MATERIAL'
-                    break
-            break
-
-    print("Animation setup complete: Green Sphere orbiting Red Sphere.")
-else:
-    if not green_sphere:
-        print("Error: 'Green Sphere' object not found.")
-    if not red_sphere:
-        print("Error: 'Red Sphere' object not found.")
-Post-sanitized code: import bpy
-import math
-
-# Find the objects
-green_sphere = bpy.data.objects.get('Green Sphere')
-red_sphere = bpy.data.objects.get('Red Sphere')
-
-# Get the main collection
-main_collection = bpy.context.scene.collection.children.get('Collection')
-if not main_collection:
-    main_collection = bpy.context.scene.collection
-
-if green_sphere and red_sphere:
-    # Ensure objects are visible
-    if green_sphere.name not in main_collection.objects:
-        try: main_collection.objects.link(green_sphere) except Exception as e: print(f'Note: {e}')
-    if red_sphere.name not in main_collection.objects:
-        try: main_collection.objects.link(red_sphere) except Exception as e: print(f'Note: {e}')
-
-    # Create an empty object at the red sphere's location
-    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)
-    orbit_empty = bpy.context.active_object
-    orbit_empty.name = 'Orbit_Empty'
-
-    # Link the empty to the collection
-    if orbit_empty.name not in main_collection.objects:
-         try: main_collection.objects.link(orbit_empty) except Exception as e: print(f'Note: {e}')
-
-    # Parent the green sphere to the empty
-    green_sphere.parent = orbit_empty
-
-    # Set up animation
-    scene = bpy.context.scene
-    scene.frame_start = 1
-    scene.frame_end = 100 # Animation over 100 frames
-
-    # Animate the empty's rotation
-    orbit_empty.rotation_euler = (0, 0, 0)
-    scene.frame_set(scene.frame_start)
-    orbit_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_start) # Keyframe Z rotation
-
-    orbit_empty.rotation_euler = (0, 0, math.radians(360)) # Rotate 360 degrees
-    scene.frame_set(scene.frame_end)
-    orbit_empty.keyframe_insert(data_path='rotation_euler', index=2, frame=scene.frame_end) # Keyframe Z rotation
-
-    # Set interpolation to linear for constant speed
-    fcurves = orbit_empty.animation_data.action.fcurves
-    for fcurve in fcurves:
-        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:
-            for kp in fcurve.keyframe_points:
-                kp.interpolation = 'LINEAR'
-
-    # Set viewport shading to material for visibility
-    for area in bpy.context.screen.areas:
-        if area.type == 'VIEW_3D':
-            for space in area.spaces:
-                if space.type == 'VIEW_3D':
-                    space.shading.type = 'MATERIAL'
-                    break
-            break
-
-    print("Animation setup complete: Green Sphere orbiting Red Sphere.")
-else:
-    if not green_sphere:
-        print("Error: 'Green Sphere' object not found.")
-    if not red_sphere:
-        print("Error: 'Red Sphere' object not found.")
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157298-wgIe8RL0v7mIb1wPUojx",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157298,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport math\\n\\n# Get the objects\\ngreen_sphere = bpy.data.objects.get('Green Sphere')\\nred_sphere = bpy.data.objects.get('Red Sphere')\\n\\nif not green_sphere:\\n    print(\\\"Error: 'Green Sphere' not found.\\\")\\n    message = \\\"Could not find the 'Green Sphere' object to animate.\\\"\\nelif not red_sphere:\\n    print(\\\"Error: 'Red Sphere' not found.\\\")\\n    message = \\\"Could not find the 'Red Sphere' object to orbit around.\\\"\\nelif green_sphere.type != 'MESH' or red_sphere.type != 'MESH':\\n    print(\\\"Error: Objects must be mesh types.\\\")\\n    message = \\\"Both 'Green Sphere' and 'Red Sphere' must be mesh objects.\\\"\\nelse:\\n    # Ensure objects have animation data\\n    if not green_sphere.animation_data: green_sphere.animation_data_create()\\n    if not green_sphere.animation_data.action: green_sphere.animation_data.action = bpy.data.actions.new(name=f\\\"{green_sphere.name}Action\\\")\\n    if not red_sphere.animation_data: red_sphere.animation_data_create()\\n    if not red_sphere.animation_data.action: red_sphere.animation_data.action = bpy.data.actions.new(name=f\\\"{red_sphere.name}Action\\\")\\n\\n    # Create an Empty to use as the orbit pivot\\n    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)\\n    pivot_empty = bpy.context.active_object\\n    pivot_empty.name = 'Orbit_Pivot'\\n\\n    # Link the empty to the collection\\n    main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\n    try:\\n        main_collection.objects.link(pivot_empty)\\n    except Exception as e:\\n        print(f'Note: {e}') # Already linked is okay\\n\\n    # Parent the green sphere to the empty, keeping its current transformation relative to the empty\\n    # Temporarily select objects for parenting operator\\n    bpy.ops.object.select_all(action='DESELECT')\\n    green_sphere.select_set(True)\\n    pivot_empty.select_set(True)\\n    bpy.context.view_layer.objects.active = pivot_empty # Set the parent as active\\n    bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)\\n\\n    # Animate the empty's rotation\\n    scene = bpy.context.scene\\n    scene.frame_start = 1\\n    scene.frame_end = 100 # Example: 100 frames for one orbit\\n\\n    # Keyframe start rotation (0 degrees)\\n    scene.frame_set(scene.frame_start)\\n    pivot_empty.rotation_euler = (0, 0, 0)\\n    pivot_empty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_start)\\n\\n    # Keyframe end rotation (360 degrees or 2*pi radians)\\n    scene.frame_set(scene.frame_end)\\n    pivot_empty.rotation_euler = (0, 0, math.radians(360))\\n    pivot_empty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_end)\\n\\n    # Set interpolation to linear for constant speed\\n    fcurves = pivot_empty.animation_data.action.fcurves\\n    for fcurve in fcurves:\\n        for kf in fcurve.keyframe_points:\\n            kf.interpolation = 'LINEAR'\\n\\n    # Deselect everything again\\n    bpy.ops.object.select_all(action='DESELECT')\\n\\n    print(\\\"Animation setup complete: Green Sphere orbiting Red Sphere.\\\")\\n    message = \\\"The Green Sphere is now set to orbit the Red Sphere over the timeline.\\\"\\n\\n\",\n  \"message\": \"The Green Sphere is now set to orbit the Red Sphere over the timeline.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Animating Sphere Orbits**\n\nOkay, animating a green sphere around a red sphere. I need to recall my animation principles. Consider the user's request for an orbit.\n\n \n \n\n\n**Pinpointing Object Actions**\n\nOkay, I'm tackling the user's animation request: a green sphere orbiting a red sphere. I need to methodically find the objects. I'll check their types to be certain and set up the rotation around the red sphere.\n\n\n**Methodically Defining Actions**\n\nOkay, I'm seeing the user's green and red sphere setup for the animation. Time to follow my methodical plan. First, locate the objects. Verify their types. Make sure I understand which object is rotating around the other. Then, define the orbit, using the empty object technique.\n\n \n \n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2572,
-    "completion_tokens": 1466,
-    "total_tokens": 4038
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-import math
-
-# Get the objects
-green_sphere = bpy.data.objects.get('Green Sphere')
-red_sphere = bpy.data.objects.get('Red Sphere')
-
-if not green_sphere:
-    print("Error: 'Green Sphere' not found.")
-    message = "Could not find the 'Green Sphere' object to animate."
-elif not red_sphere:
-    print("Error: 'Red Sphere' not found.")
-    message = "Could not find the 'Red Sphere' object to orbit around."
-elif green_sphere.type != 'MESH' or red_sphere.type != 'MESH':
-    print("Error: Objects must be mesh types.")
-    message = "Both 'Green Sphere' and 'Red Sphere' must be mesh objects."
-else:
-    # Ensure objects have animation data
-    if not green_sphere.animation_data: green_sphere.animation_data_create()
-    if not green_sphere.animation_data.action: green_sphere.animation_data.action = bpy.data.actions.new(name=f"{green_sphere.name}Action")
-    if not red_sphere.animation_data: red_sphere.animation_data_create()
-    if not red_sphere.animation_data.action: red_sphere.animation_data.action = bpy.data.actions.new(name=f"{red_sphere.name}Action")
-
-    # Create an Empty to use as the orbit pivot
-    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)
-    pivot_empty = bpy.context.active_object
-    pivot_empty.name = 'Orbit_Pivot'
-
-    # Link the empty to the collection
-    main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-    try:
-        main_collection.objects.link(pivot_empty)
-    except Exception as e:
-        print(f'Note: {e}') # Already linked is okay
-
-    # Parent the green sphere to the empty, keeping its current transformation relative to the empty
-    # Temporarily select objects for parenting operator
-    bpy.ops.object.select_all(action='DESELECT')
-    green_sphere.select_set(True)
-    pivot_empty.select_set(True)
-    bpy.context.view_layer.objects.active = pivot_empty # Set the parent as active
-    bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
-
-    # Animate the empty's rotation
-    scene = bpy.context.scene
-    scene.frame_start = 1
-    scene.frame_end = 100 # Example: 100 frames for one orbit
-
-    # Keyframe start rotation (0 degrees)
-    scene.frame_set(scene.frame_start)
-    pivot_empty.rotation_euler = (0, 0, 0)
-    pivot_empty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_start)
-
-    # Keyframe end rotation (360 degrees or 2*pi radians)
-    scene.frame_set(scene.frame_end)
-    pivot_empty.rotation_euler = (0, 0, math.radians(360))
-    pivot_empty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_end)
-
-    # Set interpolation to linear for constant speed
-    fcurves = pivot_empty.animation_data.action.fcurves
-    for fcurve in fcurves:
-        for kf in fcurve.keyframe_points:
-            kf.interpolation = 'LINEAR'
-
-    # Deselect everything again
-    bpy.ops.object.select_all(action='DESELECT')
-
-    print("Animation setup complete: Green Sphere orbiting Red Sphere.")
-    message = "The Green Sphere is now set to orbit the Red Sphere over the timeline."
-Post-sanitized code: import bpy
-import math
-
-# Get the objects
-green_sphere = bpy.data.objects.get('Green Sphere')
-red_sphere = bpy.data.objects.get('Red Sphere')
-
-if not green_sphere:
-    print("Error: 'Green Sphere' not found.")
-    message = "Could not find the 'Green Sphere' object to animate."
-elif not red_sphere:
-    print("Error: 'Red Sphere' not found.")
-    message = "Could not find the 'Red Sphere' object to orbit around."
-elif green_sphere.type != 'MESH' or red_sphere.type != 'MESH':
-    print("Error: Objects must be mesh types.")
-    message = "Both 'Green Sphere' and 'Red Sphere' must be mesh objects."
-else:
-    # Ensure objects have animation data
-    if not green_sphere.animation_data: green_sphere.animation_data_create()
-    if not green_sphere.animation_data.action: green_sphere.animation_data.action = bpy.data.actions.new(name=f"{green_sphere.name}Action")
-    if not red_sphere.animation_data: red_sphere.animation_data_create()
-    if not red_sphere.animation_data.action: red_sphere.animation_data.action = bpy.data.actions.new(name=f"{red_sphere.name}Action")
-
-    # Create an Empty to use as the orbit pivot
-    bpy.ops.object.empty_add(type='PLAIN_AXES', location=red_sphere.location)
-    pivot_empty = bpy.context.active_object
-    pivot_empty.name = 'Orbit_Pivot'
-
-    # Link the empty to the collection
-    main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-    try:
-        main_collection.objects.link(pivot_empty)
-    except Exception as e:
-        print(f'Note: {e}') # Already linked is okay
-
-    # Parent the green sphere to the empty, keeping its current transformation relative to the empty
-    # Temporarily select objects for parenting operator
-    bpy.ops.object.select_all(action='DESELECT')
-    green_sphere.select_set(True)
-    pivot_empty.select_set(True)
-    bpy.context.view_layer.objects.active = pivot_empty # Set the parent as active
-    bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
-
-    # Animate the empty's rotation
-    scene = bpy.context.scene
-    scene.frame_start = 1
-    scene.frame_end = 100 # Example: 100 frames for one orbit
-
-    # Keyframe start rotation (0 degrees)
-    scene.frame_set(scene.frame_start)
-    pivot_empty.rotation_euler = (0, 0, 0)
-    pivot_empty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_start)
-
-    # Keyframe end rotation (360 degrees or 2 * pi radians)
-    scene.frame_set(scene.frame_end)
-    pivot_empty.rotation_euler = (0, 0, math.radians(360))
-    pivot_empty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_end)
-
-    # Set interpolation to linear for constant speed
-    fcurves = pivot_empty.animation_data.action.fcurves
-    for fcurve in fcurves:
-        for kf in fcurve.keyframe_points:
-            kf.interpolation = 'LINEAR'
-
-    # Deselect everything again
-    bpy.ops.object.select_all(action='DESELECT')
-
-    print("Animation setup complete: Green Sphere orbiting Red Sphere.")
-    message = "The Green Sphere is now set to orbit the Red Sphere over the timeline."
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157336-1WawXKHUx6B8jFU59TnD",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157336,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport mathutils\\n\\nobj_name = 'Green Sphere'\\nslowdown_factor = 2.0 # Factor by which to slow down (e.g., 2.0 means twice as slow)\\n\\nobj = bpy.data.objects.get(obj_name)\\n\\nif obj and obj.animation_data and obj.animation_data.action:\\n    action = obj.animation_data.action\\n    # Check for rotation F-curves (Euler, Quaternion, or Axis Angle)\\n    rotation_fcurves = [fcurve for fcurve in action.fcurves if fcurve.data_path.startswith('rotation_')]\\n\\n    if rotation_fcurves:\\n        # Find the maximum frame number across all rotation keyframes\\n        max_frame = 0\\n        for fcurve in rotation_fcurves:\\n            for kf in fcurve.keyframe_points:\\n                max_frame = max(max_frame, kf.co[0]) # kf.co is (frame, value) tuple\\n\\n        # Scale the frame numbers of keyframes\\n        for fcurve in rotation_fcurves:\\n            for kf in fcurve.keyframe_points:\\n                kf.co[0] *= slowdown_factor\\n                # Also scale the handle positions if they exist\\n                kf.handle_left[0] *= slowdown_factor\\n                kf.handle_right[0] *= slowdown_factor\\n\\n        # Update the scene's end frame to match the new animation length\\n        bpy.context.scene.frame_end = int(max_frame * slowdown_factor)\\n\\n        print(f\\\"Successfully slowed down rotation animation for '{obj_name}'. New end frame: {bpy.context.scene.frame_end}\\\")\\n    else:\\n        print(f\\\"No rotation animation found for '{obj_name}'.\\\")\\nelse:\\n    print(f\\\"Object '{obj_name}' not found or has no animation data.\\\")\",\n  \"message\": \"We've refined the Green Sphere's spin, giving it a slower, more controlled motion.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Assessing the Request**\n\nI'm analyzing the user's prompt. They're asking about reducing the speed of the 'Green Sphere' animation. Let's see how we can achieve that.\n\n \n \n\n\n**Refining Animation Logic**\n\nOkay, user wants to slow down the 'Green Sphere'. Need to pinpoint those rotation F-curves. It involves identifying the rotation data, then scaling the time on those keyframes. Scaling by a factor of 2 to slow it down.\n\n\n**Confirming Implementation Plan**\n\nI'm reviewing the strategy. The user wants to decelerate the 'Green Sphere' animation. I need to: locate the sphere, access rotation F-curves, and scale the keyframes' X-axis (time). The code will focus on Euler rotation; double-checking data paths.\n\n \n \n\n\n**Deep Diving Into the Code**\n\nRight, I'm reviewing the script. The user specified the 'Green Sphere' and a slowdown factor.  I need to find the object, check for animation data, identify rotation curves. Then, I scale the X-axis of the keyframes and ensure the scene's end frame is correct, based on the time scaling.\n\n \n \n\n\n**Planning Code Execution**\n\nUser wants to slow the 'Green Sphere' using Python. I will find the specified object. Then, I'll target the rotation curves, specifically those related to `rotation_euler`, to modify the keyframes' frame numbers. The code will ensure time scaling by a factor of 2.\n\n \n \n\n\n**Executing Animation Adjustment**\n\nI'm now implementing the Python script based on the user's request: slow down the 'Green Sphere' rotation. The code finds the object, targets 'rotation_euler' curves, and scales keyframe times, confirming the requested slowdown factor. I'll make sure the scene's end frame matches the adjusted animation.\n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2568,
-    "completion_tokens": 2022,
-    "total_tokens": 4590
+    "completion_tokens": 1133,
+    "total_tokens": 3699
   }
 }
 Attempting to parse LLM response JSON
@@ -1314,246 +66,159 @@ Direct JSON parsing succeeded
 Pre-sanitized code: import bpy
 import mathutils
 
-obj_name = 'Green Sphere'
-slowdown_factor = 2.0 # Factor by which to slow down (e.g., 2.0 means twice as slow)
+# Create cube mesh data
+mesh = bpy.data.meshes.new("CubeMesh")
 
-obj = bpy.data.objects.get(obj_name)
+# Define vertices, edges, and faces for a cube
+verts = [
+    mathutils.Vector((-1, -1, -1)),
+    mathutils.Vector((-1, -1, 1)),
+    mathutils.Vector((-1, 1, -1)),
+    mathutils.Vector((-1, 1, 1)),
+    mathutils.Vector((1, -1, -1)),
+    mathutils.Vector((1, -1, 1)),
+    mathutils.Vector((1, 1, -1)),
+    mathutils.Vector((1, 1, 1))
+]
+edges = [
+    (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3), (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7)
+]
+faces = [
+    (0, 1, 3, 2),
+    (4, 6, 7, 5),
+    (0, 4, 5, 1),
+    (2, 3, 7, 6),
+    (0, 2, 6, 4),
+    (1, 5, 7, 3)
+]
 
-if obj and obj.animation_data and obj.animation_data.action:
-    action = obj.animation_data.action
-    # Check for rotation F-curves (Euler, Quaternion, or Axis Angle)
-    rotation_fcurves = [fcurve for fcurve in action.fcurves if fcurve.data_path.startswith('rotation_')]
+# Assign data to mesh
+mesh.from_pydata(verts, edges, faces)
+mesh.update()
 
-    if rotation_fcurves:
-        # Find the maximum frame number across all rotation keyframes
-        max_frame = 0
-        for fcurve in rotation_fcurves:
-            for kf in fcurve.keyframe_points:
-                max_frame = max(max_frame, kf.co[0]) # kf.co is (frame, value) tuple
+# Create object from mesh
+obj_name = "Red Cube"
+# Ensure unique name
+obj_base_name = obj_name
+count = 0
+while bpy.data.objects.get(obj_name) is not None:
+    count += 1
+    obj_name = f"{obj_base_name}.{count:03d}"
 
-        # Scale the frame numbers of keyframes
-        for fcurve in rotation_fcurves:
-            for kf in fcurve.keyframe_points:
-                kf.co[0] *= slowdown_factor
-                # Also scale the handle positions if they exist
-                kf.handle_left[0] *= slowdown_factor
-                kf.handle_right[0] *= slowdown_factor
+obj = bpy.data.objects.new(obj_name, mesh)
 
-        # Update the scene's end frame to match the new animation length
-        bpy.context.scene.frame_end = int(max_frame * slowdown_factor)
+# Link object to the scene collection
+main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
+try:
+    main_collection.objects.link(obj)
+except Exception as e:
+    print(f'Note: {e}') # Handle cases where object might already be linked (e.g., if created via bpy.ops)
 
-        print(f"Successfully slowed down rotation animation for '{obj_name}'. New end frame: {bpy.context.scene.frame_end}")
-    else:
-        print(f"No rotation animation found for '{obj_name}'.")
+# Create a red material
+mat_name = "RedMaterial"
+mat = bpy.data.materials.get(mat_name)
+if mat is None:
+    mat = bpy.data.materials.new(name=mat_name)
+    mat.use_nodes = True
+    # Get the Principled BSDF node
+    principled_bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    if principled_bsdf:
+        # Set the base color to red (R, G, B, Alpha)
+        principled_bsdf.inputs["Base Color"].default_value = (1.0, 0.0, 0.0, 1.0)
+
+# Assign material to object
+if obj.data.materials:
+    obj.data.materials[0] = mat
 else:
-    print(f"Object '{obj_name}' not found or has no animation data.")
-Post-sanitized code: import bpy
+    obj.data.materials.append(mat)
+
+# Optional: Set viewport shading to Material Preview to see the color
+for area in bpy.context.screen.areas:
+    if area.type == 'VIEW_3D':
+        for space in area.spaces:
+            if space.type == 'VIEW_3D':
+                space.shading.type = 'MATERIAL'
+                break
+        break
+
+print(f"Created and linked object '{obj.name}' with material '{mat.name}'.")
+Post-sanitized code: from mathutils import Vector
+import bpy
 import mathutils
 
-obj_name = 'Green Sphere'
-slowdown_factor = 2.0 # Factor by which to slow down (e.g., 2.0 means twice as slow)
+# Create cube mesh data
+mesh = bpy.data.meshes.new("CubeMesh")
 
-obj = bpy.data.objects.get(obj_name)
+# Define vertices, edges, and faces for a cube
+verts = [
+    mathutils.Vector((-1, -1, -1)),
+    mathutils.Vector((-1, -1, 1)),
+    mathutils.Vector((-1, 1, -1)),
+    mathutils.Vector((-1, 1, 1)),
+    mathutils.Vector((1, -1, -1)),
+    mathutils.Vector((1, -1, 1)),
+    mathutils.Vector((1, 1, -1)),
+    mathutils.Vector((1, 1, 1))
+]
+edges = [
+    (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3), (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7)
+]
+faces = [
+    (0, 1, 3, 2),
+    (4, 6, 7, 5),
+    (0, 4, 5, 1),
+    (2, 3, 7, 6),
+    (0, 2, 6, 4),
+    (1, 5, 7, 3)
+]
 
-if obj and obj.animation_data and obj.animation_data.action:
-    action = obj.animation_data.action
-    # Check for rotation F - curves (Euler, Quaternion, or Axis Angle)
-    rotation_fcurves = [fcurve for fcurve in action.fcurves if fcurve.data_path.startswith('rotation_')]
+# Assign data to mesh
+mesh.from_pydata(verts, edges, faces)
+mesh.update()
 
-    if rotation_fcurves:
-        # Find the maximum frame number across all rotation keyframes
-        max_frame = 0
-        for fcurve in rotation_fcurves:
-            for kf in fcurve.keyframe_points:
-                max_frame = max(max_frame, kf.co[0]) # kf.co is (frame, value) tuple
+# Create object from mesh
+obj_name = "Red Cube"
+# Ensure unique name
+obj_base_name = obj_name
+count = 0
+while bpy.data.objects.get(obj_name) is not None:
+    count += 1
+    obj_name = f"{obj_base_name}.{count:03d}"
 
-        # Scale the frame numbers of keyframes
-        for fcurve in rotation_fcurves:
-            for kf in fcurve.keyframe_points:
-                kf.co[0] *= slowdown_factor
-                # Also scale the handle positions if they exist
-                kf.handle_left[0] *= slowdown_factor
-                kf.handle_right[0] *= slowdown_factor
+obj = bpy.data.objects.new(obj_name, mesh)
 
-        # Update the scene's end frame to match the new animation length
-        bpy.context.scene.frame_end = int(max_frame * slowdown_factor)
+# Link object to the scene collection
+main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
+try:
+    main_collection.objects.link(obj)
+except Exception as e:
+    print(f'Note: {e}') # Handle cases where object might already be linked (e.g., if created via bpy.ops)
 
-        print(f"Successfully slowed down rotation animation for '{obj_name}'. New end frame: {bpy.context.scene.frame_end}")
-    else:
-        print(f"No rotation animation found for '{obj_name}'.")
+# Create a red material
+mat_name = "RedMaterial"
+mat = bpy.data.materials.get(mat_name)
+if mat is None:
+    mat = bpy.data.materials.new(name=mat_name)
+    mat.use_nodes = True
+    # Get the Principled BSDF node
+    principled_bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    if principled_bsdf:
+        # Set the base color to red (R, G, B, Alpha)
+        principled_bsdf.inputs["Base Color"].default_value = (1.0, 0.0, 0.0, 1.0)
+
+# Assign material to object
+if obj.data.materials:
+    obj.data.materials[0] = mat
 else:
-    print(f"Object '{obj_name}' not found or has no animation data.")
---- /llm-agent endpoint hit ---
---- Raw OpenRouter API Response ---
-{
-  "id": "gen-1747157372-WE74k49naxJ0PukN8JVP",
-  "provider": "Google",
-  "model": "google/gemini-2.5-flash-preview:thinking",
-  "object": "chat.completion",
-  "created": 1747157372,
-  "choices": [
-    {
-      "logprobs": null,
-      "finish_reason": "stop",
-      "native_finish_reason": "STOP",
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport math\\n\\nobj_name = 'Green Sphere'\\nobj = bpy.data.objects.get(obj_name)\\n\\nif obj and obj.type == 'MESH':\\n    # Ensure the object is not already parented to an orbit controller\\n    if obj.parent and 'Orbit_Controller' in obj.parent.name:\\n        orbit_controller = obj.parent\\n        print(f\\\"Note: '{obj_name}' is already parented to '{orbit_controller.name}'. Re-using existing controller.\\\")\\n    else:\\n        # Create an empty object to control the orbit\\n        bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))\\n        orbit_controller = bpy.context.active_object\\n        orbit_controller.name = f'{obj_name}_Orbit_Controller'\\n\\n        # Link the empty to the main collection\\n        main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\n        try:\\n            main_collection.objects.link(orbit_controller)\\n        except Exception as e:\\n            # Handle case where it might already be linked (e.g., if created via ops)\\n            print(f'Note: Could not link {orbit_controller.name} to collection. It might already be linked. {e}')\\n\\n        # Store the object's current world location relative to the controller\\n        # This ensures it orbits at its current distance\\n        relative_location = obj.location - orbit_controller.location\\n\\n        # Parent the sphere to the empty\\n        obj.parent = orbit_controller\\n\\n        # Restore the relative location after parenting\\n        obj.location = relative_location\\n\\n    # --- Set up the animation ---\\n    scene = bpy.context.scene\\n    frame_start = 1\\n    frame_end = 250 # A slow orbit over 250 frames\\n    scene.frame_start = frame_start\\n    scene.frame_end = frame_end\\n\\n    # Ensure animation data exists for the controller\\n    if not orbit_controller.animation_data:\\n        orbit_controller.animation_data_create()\\n    if not orbit_controller.animation_data.action:\\n         orbit_controller.animation_data.action = bpy.data.actions.new(name=f\\\"{orbit_controller.name}Action\\\")\\n\\n    # Keyframe rotation at start\\n    scene.frame_set(frame_start)\\n    orbit_controller.rotation_euler.z = 0 # Start at 0 degrees\\n    orbit_controller.keyframe_insert(data_path='rotation_euler', index=2, frame=frame_start) # Keyframe Z rotation\\n\\n    # Keyframe rotation at end\\n    scene.frame_set(frame_end)\\n    orbit_controller.rotation_euler.z = math.radians(360) # End at 360 degrees (full circle)\\n    orbit_controller.keyframe_insert(data_path='rotation_euler', index=2, frame=frame_end) # Keyframe Z rotation\\n\\n    # Set interpolation to Linear for constant speed\\n    fcurves = orbit_controller.animation_data.action.fcurves\\n    for fcurve in fcurves:\\n        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:\\n            for kf in fcurve.keyframe_points:\\n                kf.interpolation = 'LINEAR'\\n\\n    # Reset to start frame\\n    scene.frame_set(frame_start)\\n\\n    print(f\\\"Animation setup: '{obj_name}' will orbit using '{orbit_controller.name}' from frame {frame_start} to {frame_end}.\\\")\\n\\nelse:\\n    print(f\\\"Error: Object '{obj_name}' not found or is not a mesh.\\\")\",\n  \"message\": \"The Green Sphere is now set to orbit slowly around its origin point over 250 frames. A dedicated controller object manages the animation for smooth rotation.\"\n}\n```",
-        "refusal": null,
-        "reasoning": "Thinking... \n\n**Animating the Orbit:**\n\nI'm focusing on animating a \"Green Sphere\" as the user requested. It's about achieving a smooth orbit, and I'm considering how to best apply the principles of physics within this framework, along with how to make it visually appealing.\n\n\n**Sequencing Animation Steps**\n\nOkay, let's see. The user wants a \"Green Sphere\" animated in orbit. First, I'll fetch the object, and make sure it's set up as a mesh. I'll then create an empty, parent it, and work through the animation frames like the detailed steps outline, making sure to check the interpolation.\n\n  \n\n\n**Deconstructing the Process**\n\nOkay, the user's request, that \"Green Sphere\" orbit thing... First, grab the object, check mesh status. Next, create a controller, parent the sphere. Define radius. Frame setup, keyframes, Z-rotation, full circle. Finally, setting interpolation, like the detailed steps.\n\n \n\n\n"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 2568,
-    "completion_tokens": 1401,
-    "total_tokens": 3969
-  }
-}
-Attempting to parse LLM response JSON
-Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-import math
+    obj.data.materials.append(mat)
 
-obj_name = 'Green Sphere'
-obj = bpy.data.objects.get(obj_name)
+# Optional: Set viewport shading to Material Preview to see the color
+for area in bpy.context.screen.areas:
+    if area.type == 'VIEW_3D':
+        for space in area.spaces:
+            if space.type == 'VIEW_3D':
+                space.shading.type = 'MATERIAL'
+                break
+        break
 
-if obj and obj.type == 'MESH':
-    # Ensure the object is not already parented to an orbit controller
-    if obj.parent and 'Orbit_Controller' in obj.parent.name:
-        orbit_controller = obj.parent
-        print(f"Note: '{obj_name}' is already parented to '{orbit_controller.name}'. Re-using existing controller.")
-    else:
-        # Create an empty object to control the orbit
-        bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))
-        orbit_controller = bpy.context.active_object
-        orbit_controller.name = f'{obj_name}_Orbit_Controller'
-
-        # Link the empty to the main collection
-        main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-        try:
-            main_collection.objects.link(orbit_controller)
-        except Exception as e:
-            # Handle case where it might already be linked (e.g., if created via ops)
-            print(f'Note: Could not link {orbit_controller.name} to collection. It might already be linked. {e}')
-
-        # Store the object's current world location relative to the controller
-        # This ensures it orbits at its current distance
-        relative_location = obj.location - orbit_controller.location
-
-        # Parent the sphere to the empty
-        obj.parent = orbit_controller
-
-        # Restore the relative location after parenting
-        obj.location = relative_location
-
-    # --- Set up the animation ---
-    scene = bpy.context.scene
-    frame_start = 1
-    frame_end = 250 # A slow orbit over 250 frames
-    scene.frame_start = frame_start
-    scene.frame_end = frame_end
-
-    # Ensure animation data exists for the controller
-    if not orbit_controller.animation_data:
-        orbit_controller.animation_data_create()
-    if not orbit_controller.animation_data.action:
-         orbit_controller.animation_data.action = bpy.data.actions.new(name=f"{orbit_controller.name}Action")
-
-    # Keyframe rotation at start
-    scene.frame_set(frame_start)
-    orbit_controller.rotation_euler.z = 0 # Start at 0 degrees
-    orbit_controller.keyframe_insert(data_path='rotation_euler', index=2, frame=frame_start) # Keyframe Z rotation
-
-    # Keyframe rotation at end
-    scene.frame_set(frame_end)
-    orbit_controller.rotation_euler.z = math.radians(360) # End at 360 degrees (full circle)
-    orbit_controller.keyframe_insert(data_path='rotation_euler', index=2, frame=frame_end) # Keyframe Z rotation
-
-    # Set interpolation to Linear for constant speed
-    fcurves = orbit_controller.animation_data.action.fcurves
-    for fcurve in fcurves:
-        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:
-            for kf in fcurve.keyframe_points:
-                kf.interpolation = 'LINEAR'
-
-    # Reset to start frame
-    scene.frame_set(frame_start)
-
-    print(f"Animation setup: '{obj_name}' will orbit using '{orbit_controller.name}' from frame {frame_start} to {frame_end}.")
-
-else:
-    print(f"Error: Object '{obj_name}' not found or is not a mesh.")
-Post-sanitized code: import bpy
-import math
-
-obj_name = 'Green Sphere'
-obj = bpy.data.objects.get(obj_name)
-
-if obj and obj.type == 'MESH':
-    # Ensure the object is not already parented to an orbit controller
-    if obj.parent and 'Orbit_Controller' in obj.parent.name:
-        orbit_controller = obj.parent
-        print(f"Note: '{obj_name}' is already parented to '{orbit_controller.name}'. Re - using existing controller.")
-    else:
-        # Create an empty object to control the orbit
-        bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))
-        orbit_controller = bpy.context.active_object
-        orbit_controller.name = f'{obj_name}_Orbit_Controller'
-
-        # Link the empty to the main collection
-        main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-        try:
-            main_collection.objects.link(orbit_controller)
-        except Exception as e:
-            # Handle case where it might already be linked (e.g., if created via ops)
-            print(f'Note: Could not link {orbit_controller.name} to collection. It might already be linked. {e}')
-
-        # Store the object's current world location relative to the controller
-        # This ensures it orbits at its current distance
-        relative_location = obj.location - orbit_controller.location
-
-        # Parent the sphere to the empty
-        obj.parent = orbit_controller
-
-        # Restore the relative location after parenting
-        obj.location = relative_location
-
-    # --- Set up the animation --- # Missing value or operator - auto - fixed
-    scene = bpy.context.scene
-    frame_start = 1
-    frame_end = 250 # A slow orbit over 250 frames
-    scene.frame_start = frame_start
-    scene.frame_end = frame_end
-
-    # Ensure animation data exists for the controller
-    if not orbit_controller.animation_data:
-        orbit_controller.animation_data_create()
-    if not orbit_controller.animation_data.action:
-         orbit_controller.animation_data.action = bpy.data.actions.new(name=f"{orbit_controller.name}Action")
-
-    # Keyframe rotation at start
-    scene.frame_set(frame_start)
-    orbit_controller.rotation_euler.z = 0 # Start at 0 degrees
-    orbit_controller.keyframe_insert(data_path='rotation_euler', index=2, frame=frame_start) # Keyframe Z rotation
-
-    # Keyframe rotation at end
-    scene.frame_set(frame_end)
-    orbit_controller.rotation_euler.z = math.radians(360) # End at 360 degrees (full circle)
-    orbit_controller.keyframe_insert(data_path='rotation_euler', index=2, frame=frame_end) # Keyframe Z rotation
-
-    # Set interpolation to Linear for constant speed
-    fcurves = orbit_controller.animation_data.action.fcurves
-    for fcurve in fcurves:
-        if fcurve.data_path == 'rotation_euler' and fcurve.array_index == 2:
-            for kf in fcurve.keyframe_points:
-                kf.interpolation = 'LINEAR'
-
-    # Reset to start frame
-    scene.frame_set(frame_start)
-
-    print(f"Animation setup: '{obj_name}' will orbit using '{orbit_controller.name}' from frame {frame_start} to {frame_end}.")
-
-else:
-    print(f"Error: Object '{obj_name}' not found or is not a mesh.")
+print(f"Created and linked object '{obj.name}' with material '{mat.name}'.")
