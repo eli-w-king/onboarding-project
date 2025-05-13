@@ -26,10 +26,9 @@ const app = express();
 const PORT = 3002;
 const BLENDER_HOST = 'localhost';
 const BLENDER_PORT = 9876;
-// Using a test API key - replace with your own for production use
-// The included test key is limited and may not work for all requests
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
-console.log(`Using OpenRouter API key: ${OPENROUTER_API_KEY.substring(0, 10)}...`);
+
+
+// BYOK: No API key is ever loaded from .env or hardcoded. Key must be provided by the frontend per request.
 
 // Serve static files (index.html, etc.) from the current directory
 app.use(express.static(__dirname));
@@ -57,12 +56,12 @@ app.post('/llm-agent', async (req, res) => {
   const blenderPrompts = require('./blender-system-prompts.js');
   const systemPrompt = blenderPrompts.getComprehensiveSystemPrompt().join('\n');
 
-  // Check for missing API key
-  if (!OPENROUTER_API_KEY || (OPENROUTER_API_KEY.startsWith('sk-or-v1-') && OPENROUTER_API_KEY.length < 40)) {
-    console.error('--- Missing or invalid OpenRouter API key ---');
-    console.error('Using the default key which may have limited usage or be expired');
-    // Continue with the request but log a warning
-    console.log('Attempting to use the default API key - this may fail');
+
+
+  // BYOK: Require API key from frontend per request
+  const OPENROUTER_API_KEY = req.body.apiKey;
+  if (!OPENROUTER_API_KEY || typeof OPENROUTER_API_KEY !== 'string' || OPENROUTER_API_KEY.length < 40) {
+    return res.status(400).json({ error: 'Missing or invalid OpenRouter API key. Please provide your own key.' });
   }
 
   const messages = [
@@ -77,11 +76,11 @@ app.post('/llm-agent', async (req, res) => {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://github.com', // Adding referrer for auth
+        'HTTP-Referer': 'https://github.com',
         'X-Title': 'Blender LLM Bridge'
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-preview:thinking', // Changed from openai/gpt-4o
+        model: 'google/gemini-2.5-flash-preview:thinking',
         messages,
         max_tokens: 2048,
         temperature: 0.2

@@ -1,16 +1,15 @@
 Loaded environment variables from .env file
-Using OpenRouter API key: sk-or-v1-0...
 MCP client bridge listening on http://localhost:3002
-Server started at: 2025-05-13T18:51:55.283Z
+Server started at: 2025-05-13T19:44:55.041Z
 Blender MCP expected at: localhost:9876
 --- /llm-agent endpoint hit ---
 --- Raw OpenRouter API Response ---
 {
-  "id": "gen-1747162341-m86XBBlY3Eo9pT8vFFum",
+  "id": "gen-1747165506-gBHa86AoNtj0IsRaQtwk",
   "provider": "Google",
   "model": "google/gemini-2.5-flash-preview:thinking",
   "object": "chat.completion",
-  "created": 1747162341,
+  "created": 1747165506,
   "choices": [
     {
       "logprobs": null,
@@ -19,16 +18,16 @@ Blender MCP expected at: localhost:9876
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello there! Ready to create something amazing in Blender today?\"\n}\n```",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}\n```",
         "refusal": null,
-        "reasoning": "**Assessing the Greeting's Intent**\n\nOkay, the user offered a simple \"hello\". I recall their query wasn't about Blender. Per the instructions, I need to offer a warm response, then shift focus.\n\n  \n\n\n"
+        "reasoning": "Thinking... \n\n**Analyzing the Query's Nature**\n\nThe user's \"hello\" is a simple greeting, as noted in their query. It's not a request for information or action, which I must consider.\n\n \n \n\n\n**Processing User Input**\n\nThe user said \"hello\". Instructions state to categorize this as a greeting. Then a friendly statement is appropriate, I will maintain the query type.\n\n\n"
       }
     }
   ],
   "usage": {
     "prompt_tokens": 2563,
-    "completion_tokens": 134,
-    "total_tokens": 2697
+    "completion_tokens": 115,
+    "total_tokens": 2678
   }
 }
 Attempting to parse LLM response JSON
@@ -36,11 +35,11 @@ Direct JSON parsing succeeded
 --- /llm-agent endpoint hit ---
 --- Raw OpenRouter API Response ---
 {
-  "id": "gen-1747162352-ZZXM7DBga5k8w2EEAcwE",
+  "id": "gen-1747165615-KbyiTxIt5HLm2XFz2Qlc",
   "provider": "Google",
   "model": "google/gemini-2.5-flash-preview:thinking",
   "object": "chat.completion",
-  "created": 1747162352,
+  "created": 1747165615,
   "choices": [
     {
       "logprobs": null,
@@ -49,176 +48,17 @@ Direct JSON parsing succeeded
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\nimport mathutils\\n\\n# Create cube mesh data\\nmesh = bpy.data.meshes.new(\\\"CubeMesh\\\")\\n\\n# Define vertices, edges, and faces for a cube\\nverts = [\\n    mathutils.Vector((-1, -1, -1)),\\n    mathutils.Vector((-1, -1, 1)),\\n    mathutils.Vector((-1, 1, -1)),\\n    mathutils.Vector((-1, 1, 1)),\\n    mathutils.Vector((1, -1, -1)),\\n    mathutils.Vector((1, -1, 1)),\\n    mathutils.Vector((1, 1, -1)),\\n    mathutils.Vector((1, 1, 1))\\n]\\nedges = [\\n    (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3), (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7)\\n]\\nfaces = [\\n    (0, 1, 3, 2),\\n    (4, 6, 7, 5),\\n    (0, 4, 5, 1),\\n    (2, 3, 7, 6),\\n    (0, 2, 6, 4),\\n    (1, 5, 7, 3)\\n]\\n\\n# Assign data to mesh\\nmesh.from_pydata(verts, edges, faces)\\nmesh.update()\\n\\n# Create object from mesh\\nobj_name = \\\"Red Cube\\\"\\n# Ensure unique name\\nobj_base_name = obj_name\\ncount = 0\\nwhile bpy.data.objects.get(obj_name) is not None:\\n    count += 1\\n    obj_name = f\\\"{obj_base_name}.{count:03d}\\\"\\n\\nobj = bpy.data.objects.new(obj_name, mesh)\\n\\n# Link object to the scene collection\\nmain_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection\\ntry:\\n    main_collection.objects.link(obj)\\nexcept Exception as e:\\n    print(f'Note: {e}') # Handle cases where object might already be linked (e.g., if created via bpy.ops)\\n\\n# Create a red material\\nmat_name = \\\"RedMaterial\\\"\\nmat = bpy.data.materials.get(mat_name)\\nif mat is None:\\n    mat = bpy.data.materials.new(name=mat_name)\\n    mat.use_nodes = True\\n    # Get the Principled BSDF node\\n    principled_bsdf = mat.node_tree.nodes.get(\\\"Principled BSDF\\\")\\n    if principled_bsdf:\\n        # Set the base color to red (R, G, B, Alpha)\\n        principled_bsdf.inputs[\\\"Base Color\\\"].default_value = (1.0, 0.0, 0.0, 1.0)\\n\\n# Assign material to object\\nif obj.data.materials:\\n    obj.data.materials[0] = mat\\nelse:\\n    obj.data.materials.append(mat)\\n\\n# Optional: Set viewport shading to Material Preview to see the color\\nfor area in bpy.context.screen.areas:\\n    if area.type == 'VIEW_3D':\\n        for space in area.spaces:\\n            if space.type == 'VIEW_3D':\\n                space.shading.type = 'MATERIAL'\\n                break\\n        break\\n\\nprint(f\\\"Created and linked object '{obj.name}' with material '{mat.name}'.\\\")\",\n  \"message\": \"A striking red cube has been added to your scene, ready for your creative touch.\"\n}\n```",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}",
         "refusal": null,
-        "reasoning": "Thinking... \n\n**Constructing the Cube**\n\nOkay, let's start by creating a cube mesh, per the user's request to add a red cube. Utilizing `bpy.data.meshes.new` seems like the most logical first step.\n\n \n\n\n**Implementing the Red Cube**\n\nOkay, let's work through this list. The user needs a red cube, so I'll construct it with `bpy.data.meshes.new`, link it, and create the appropriate material. Then, I'll set the color, assign it, rename, and package it all up for a clean JSON response.\n\n \n\n\n"
+        "reasoning": "**Analyzing Initial Input**\n\nOkay, a simple \"hello\" from the user. Just as I thought, this isn't directly related to Blender functionality. I'll respond quickly, with excitement, and steer it back towards the core topic: Blender.\n\n\n\n"
       }
     }
   ],
   "usage": {
-    "prompt_tokens": 2566,
-    "completion_tokens": 1133,
-    "total_tokens": 3699
+    "prompt_tokens": 2563,
+    "completion_tokens": 77,
+    "total_tokens": 2640
   }
 }
 Attempting to parse LLM response JSON
 Direct JSON parsing succeeded
-Pre-sanitized code: import bpy
-import mathutils
-
-# Create cube mesh data
-mesh = bpy.data.meshes.new("CubeMesh")
-
-# Define vertices, edges, and faces for a cube
-verts = [
-    mathutils.Vector((-1, -1, -1)),
-    mathutils.Vector((-1, -1, 1)),
-    mathutils.Vector((-1, 1, -1)),
-    mathutils.Vector((-1, 1, 1)),
-    mathutils.Vector((1, -1, -1)),
-    mathutils.Vector((1, -1, 1)),
-    mathutils.Vector((1, 1, -1)),
-    mathutils.Vector((1, 1, 1))
-]
-edges = [
-    (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3), (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7)
-]
-faces = [
-    (0, 1, 3, 2),
-    (4, 6, 7, 5),
-    (0, 4, 5, 1),
-    (2, 3, 7, 6),
-    (0, 2, 6, 4),
-    (1, 5, 7, 3)
-]
-
-# Assign data to mesh
-mesh.from_pydata(verts, edges, faces)
-mesh.update()
-
-# Create object from mesh
-obj_name = "Red Cube"
-# Ensure unique name
-obj_base_name = obj_name
-count = 0
-while bpy.data.objects.get(obj_name) is not None:
-    count += 1
-    obj_name = f"{obj_base_name}.{count:03d}"
-
-obj = bpy.data.objects.new(obj_name, mesh)
-
-# Link object to the scene collection
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(obj)
-except Exception as e:
-    print(f'Note: {e}') # Handle cases where object might already be linked (e.g., if created via bpy.ops)
-
-# Create a red material
-mat_name = "RedMaterial"
-mat = bpy.data.materials.get(mat_name)
-if mat is None:
-    mat = bpy.data.materials.new(name=mat_name)
-    mat.use_nodes = True
-    # Get the Principled BSDF node
-    principled_bsdf = mat.node_tree.nodes.get("Principled BSDF")
-    if principled_bsdf:
-        # Set the base color to red (R, G, B, Alpha)
-        principled_bsdf.inputs["Base Color"].default_value = (1.0, 0.0, 0.0, 1.0)
-
-# Assign material to object
-if obj.data.materials:
-    obj.data.materials[0] = mat
-else:
-    obj.data.materials.append(mat)
-
-# Optional: Set viewport shading to Material Preview to see the color
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-                break
-        break
-
-print(f"Created and linked object '{obj.name}' with material '{mat.name}'.")
-Post-sanitized code: from mathutils import Vector
-import bpy
-import mathutils
-
-# Create cube mesh data
-mesh = bpy.data.meshes.new("CubeMesh")
-
-# Define vertices, edges, and faces for a cube
-verts = [
-    mathutils.Vector((-1, -1, -1)),
-    mathutils.Vector((-1, -1, 1)),
-    mathutils.Vector((-1, 1, -1)),
-    mathutils.Vector((-1, 1, 1)),
-    mathutils.Vector((1, -1, -1)),
-    mathutils.Vector((1, -1, 1)),
-    mathutils.Vector((1, 1, -1)),
-    mathutils.Vector((1, 1, 1))
-]
-edges = [
-    (0, 1), (0, 2), (0, 4), (1, 3), (1, 5), (2, 3), (2, 6), (3, 7), (4, 5), (4, 6), (5, 7), (6, 7)
-]
-faces = [
-    (0, 1, 3, 2),
-    (4, 6, 7, 5),
-    (0, 4, 5, 1),
-    (2, 3, 7, 6),
-    (0, 2, 6, 4),
-    (1, 5, 7, 3)
-]
-
-# Assign data to mesh
-mesh.from_pydata(verts, edges, faces)
-mesh.update()
-
-# Create object from mesh
-obj_name = "Red Cube"
-# Ensure unique name
-obj_base_name = obj_name
-count = 0
-while bpy.data.objects.get(obj_name) is not None:
-    count += 1
-    obj_name = f"{obj_base_name}.{count:03d}"
-
-obj = bpy.data.objects.new(obj_name, mesh)
-
-# Link object to the scene collection
-main_collection = bpy.context.scene.collection.children.get('Collection') or bpy.context.scene.collection
-try:
-    main_collection.objects.link(obj)
-except Exception as e:
-    print(f'Note: {e}') # Handle cases where object might already be linked (e.g., if created via bpy.ops)
-
-# Create a red material
-mat_name = "RedMaterial"
-mat = bpy.data.materials.get(mat_name)
-if mat is None:
-    mat = bpy.data.materials.new(name=mat_name)
-    mat.use_nodes = True
-    # Get the Principled BSDF node
-    principled_bsdf = mat.node_tree.nodes.get("Principled BSDF")
-    if principled_bsdf:
-        # Set the base color to red (R, G, B, Alpha)
-        principled_bsdf.inputs["Base Color"].default_value = (1.0, 0.0, 0.0, 1.0)
-
-# Assign material to object
-if obj.data.materials:
-    obj.data.materials[0] = mat
-else:
-    obj.data.materials.append(mat)
-
-# Optional: Set viewport shading to Material Preview to see the color
-for area in bpy.context.screen.areas:
-    if area.type == 'VIEW_3D':
-        for space in area.spaces:
-            if space.type == 'VIEW_3D':
-                space.shading.type = 'MATERIAL'
-                break
-        break
-
-print(f"Created and linked object '{obj.name}' with material '{mat.name}'.")

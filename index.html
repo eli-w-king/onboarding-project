@@ -231,7 +231,13 @@
     </style>
 </head>
 <body>
-
+    <!-- API Key Update UI -->
+    <div class="api-key-container">
+        <label for="api-key-input" style="font-weight:bold;">OpenRouter API Key:</label>
+        <input type="text" id="api-key-input" placeholder="Enter new API key..." autocomplete="off" />
+        <button id="api-key-save-btn">Save Key</button>
+        <span id="api-key-status" class="status" style="display:flex;align-items:center;gap:6px;"><span id="api-key-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#aaa;"></span><span id="api-key-msg">Waiting for API key...</span></span>
+    </div>
 
     <div class="chat-container" style="margin-top:10px; height: calc(100vh - 20px);">
         <div class="messages" id="llm-messages">
@@ -249,6 +255,55 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // API Key update logic
+            const apiKeyInput = document.getElementById('api-key-input');
+            const apiKeySaveBtn = document.getElementById('api-key-save-btn');
+            const apiKeyStatus = document.getElementById('api-key-status');
+            const apiKeyDot = document.getElementById('api-key-dot');
+            const apiKeyMsg = document.getElementById('api-key-msg');
+
+            function setApiKeyStatus(color, msg) {
+                apiKeyDot.style.background = color;
+                apiKeyMsg.textContent = msg;
+            }
+
+            // Set initial state (gray dot)
+            setApiKeyStatus('#aaa', 'Waiting for API key...');
+
+            // Update dot to gray if input is empty
+            apiKeyInput.addEventListener('input', function() {
+                if (!apiKeyInput.value.trim()) {
+                    setApiKeyStatus('#aaa', 'Waiting for API key...');
+                }
+            });
+
+            apiKeySaveBtn.addEventListener('click', async function() {
+                const apiKey = apiKeyInput.value.trim();
+                setApiKeyStatus('#aaa', 'Waiting for API key...');
+                if (!apiKey) {
+                    setApiKeyStatus('#aaa', 'Please enter an API key.');
+                    return;
+                }
+                apiKeySaveBtn.disabled = true;
+                setApiKeyStatus('#aaa', 'Saving...');
+                try {
+                    const response = await fetch('/api/update-api-key', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ apiKey })
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.success) {
+                        setApiKeyStatus('#2ecc40', 'Success!'); // green dot
+                    } else {
+                        setApiKeyStatus('#d32f2f', data.error || 'Failed to update API key.'); // red dot
+                    }
+                } catch (err) {
+                    setApiKeyStatus('#d32f2f', 'Network or server error.');
+                } finally {
+                    apiKeySaveBtn.disabled = false;
+                }
+            });
             // LLM agent chat
             const llmUserInput = document.getElementById('llm-user-input');
             const llmSendButton = document.getElementById('llm-send-button');
@@ -289,7 +344,12 @@
             // LLM agent chat logic
             async function sendLLMMessage() {
                 const userMessageText = llmUserInput.value.trim();
+                const apiKey = apiKeyInput.value.trim();
                 if (!userMessageText) return;
+                if (!apiKey) {
+                    llmStatusElement.innerHTML = `<span class="error">Please enter your OpenRouter API key above.</span>`;
+                    return;
+                }
                 addMessageToUI(llmMessagesContainer, 'user', userMessageText);
                 llmUserInput.value = '';
                 llmSendButton.disabled = true;
@@ -299,7 +359,7 @@
                     const response = await fetch('http://localhost:3002/llm-agent', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: userMessageText })
+                        body: JSON.stringify({ prompt: userMessageText, apiKey })
                     });
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({ error: { message: `HTTP error! status: ${response.status}` } }));
