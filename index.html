@@ -130,6 +130,36 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+
+        .circular-loader {
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+        .circular-loader svg {
+            width: 54px;
+            height: 54px;
+            display: block;
+        }
+        .circular-loader .circle-bg {
+            stroke: #e3eaf3;
+        }
+        .circular-loader .circle {
+            stroke: #2196f3;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            fill: none;
+            stroke-dasharray: 157;
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 0.3s linear;
         }
         
         button {
@@ -542,35 +572,10 @@
                     return;
                 }
                 
-                // Start loading animation with smooth progress bar
-                const progressContainer = document.getElementById('progress-container');
-                const progressBar = document.getElementById('progress-bar');
-                progressContainer.classList.add('visible');
-                progressBar.style.transition = 'none';
-                progressBar.style.width = '0%';
-                // Force reflow to apply the transition reset
-                void progressBar.offsetWidth;
-                progressBar.style.transition = 'width 0.3s linear';
-                const maxTimeout = 20000; // 20 seconds max timeout
-                let startTime = Date.now();
-                let animationFrame;
-                let finished = false;
-                function animateProgress() {
-                    if (finished) return;
-                    const elapsedTime = Date.now() - startTime;
-                    const progress = Math.min((elapsedTime / maxTimeout) * 100, 99.5); // Cap at 99.5% until completion
-                    progressBar.style.width = progress + '%';
-                    if (progress < 99.5) {
-                        animationFrame = requestAnimationFrame(animateProgress);
-                    }
-                }
-                animateProgress();
-                
                 addMessageToUI(llmMessagesContainer, 'user', userMessageText);
                 llmUserInput.value = '';
                 llmSendButton.disabled = true;
                 llmUserInput.disabled = true;
-                // Remove status text for minimal UI
                 
                 try {
                     const response = await fetch('http://localhost:3002/llm-agent', {
@@ -609,20 +614,9 @@
                     console.error('Error in LLM/Blender flow:', error);
                     addMessageToUI(llmMessagesContainer, 'assistant', `Sorry, I encountered an error: ${escapeHtml(error.message)}`);
                 } finally {
-                    // Complete the progress animation smoothly
-                    finished = true;
-                    progressBar.style.width = '100%';
-                    setTimeout(() => {
-                        progressContainer.classList.remove('visible');
-                        progressBar.style.transition = 'none';
-                        progressBar.style.width = '0%';
-                        // Restore the transition after reset
-                        setTimeout(() => { progressBar.style.transition = 'width 0.3s linear'; }, 50);
-                        llmSendButton.disabled = false;
-                        llmUserInput.disabled = false;
-                        llmUserInput.focus();
-                    }, 400);
-                    if (animationFrame) cancelAnimationFrame(animationFrame);
+                    llmSendButton.disabled = false;
+                    llmUserInput.disabled = false;
+                    llmUserInput.focus();
                 }
             }
 
