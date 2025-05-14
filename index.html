@@ -9,14 +9,14 @@
         .site-header {
             padding: 15px 0;
             text-align: center;
+            display: flex;
+            justify-content: center;
         }
         
-        .site-header h1 {
-            margin: 0;
-            font-weight: 400;
-            color: #333;
-            font-size: 24px;
-            letter-spacing: 0.5px;
+        .site-logo {
+            height: 32px;
+            width: auto;
+            display: block;
         }
         
         /* Blue pulsing dot typing indicator for chat */
@@ -182,11 +182,56 @@
             transition: all 0.2s ease;
         }
 
-        .model-selector {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            min-width: 200px;
+        .dropdown-selectors {
+            display: flex;
+            gap: 16px;
+            margin: 8px 15px 0;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        
+        .dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-container label {
+            display: inline-block;
+            font-size: 13px;
+            color: #666;
+            font-weight: 400;
+            margin-right: 6px;
+        }
+        
+        .model-selector, .application-selector {
+            padding: 4px 16px 4px 4px;
+            border: none;
+            min-width: 90px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            background-color: transparent;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 2px center;
+            transition: color 0.2s ease;
+        }
+        
+        .model-selector:hover, .application-selector:hover {
+            color: #2196f3;
+        }
+        
+        .model-selector:focus, .application-selector:focus {
+            outline: none;
+            color: #2196f3;
+        }
+        
+        .disabled-option {
+            color: #bbb;
         }
 
         .chat-container {
@@ -592,6 +637,23 @@
                     width: 100%;
                     height: 2px;
                 }
+                
+                .dropdown-selectors {
+                    gap: 10px;
+                    margin: 6px 10px 0;
+                    flex-wrap: wrap;
+                    justify-content: flex-start;
+                }
+                
+                .dropdown-container label {
+                    font-size: 12px;
+                }
+                
+                .model-selector, .application-selector {
+                    font-size: 12px;
+                    min-width: 80px;
+                    padding: 3px 14px 3px 3px;
+                }
             }
 
         /* Simple progress bar below the chat input - hidden but kept for future use */
@@ -623,7 +685,7 @@
 <body>
     <!-- Site Header -->
     <div class="site-header">
-        <h1>Plainshape</h1>
+        <img src="plainspace logo.png" alt="Plainshape" class="site-logo">
     </div>
 
     <!-- API Key Update UI -->
@@ -631,6 +693,27 @@
         <input type="text" id="api-key-input" placeholder="Enter OpenRouter API key" autocomplete="off" />
         <span id="api-key-status" style="display:flex;align-items:center;margin:0 0 0 8px;"><span id="api-key-dot" style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#aaa;"></span></span>
         <a href="https://openrouter.ai/docs/faq" target="_blank" class="api-key-link" title="How to get a key" style="display:flex;align-items:center;margin:0 0 0 8px;text-decoration:none;"><span class="help-icon" style="display:inline-flex;justify-content:center;align-items:center;width:15px;height:15px;font-size:11px;border-radius:50%;background:#e9e9e9;color:#555;box-shadow:0 1px 2px rgba(0,0,0,0.04);font-weight:500;letter-spacing:0.2px;text-decoration:none;">?</span></a>
+    </div>
+    
+    <!-- Model Selection Dropdowns -->
+    <div class="dropdown-selectors">
+        <div class="dropdown-container">
+            <label for="application-selector">Application:</label>
+            <select id="application-selector" class="application-selector" disabled>
+                <option value="blender">Blender</option>
+                <option value="rhino" disabled class="disabled-option">Rhino</option>
+                <option value="figma" disabled class="disabled-option">Figma</option>
+            </select>
+        </div>
+        <div class="dropdown-container">
+            <label for="model-selector">Model:</label>
+            <select id="model-selector" class="model-selector" disabled>
+                <option value="google/gemini-2.5-flash-preview:thinking">Gemini</option>
+                <option value="anthropic/claude-3.7-sonnet:thinking">Claude</option>
+                <option value="openai/gpt-4.1">GPT</option>
+                <option value="x-ai/grok-3-beta">Grok</option>
+            </select>
+        </div>
     </div>
 
     <div id="chat-container" class="chat-container" style="margin-top:8px; height: calc(100vh - 100px); display: flex; flex-direction: column;">
@@ -689,12 +772,51 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Removed hover effects and bubble animations to keep the UI clean and minimal
             
+            // Track used greetings to avoid repetition
+            const usedGreetings = new Set();
+            
+            // List of possible greeting variations
+            const greetingVariations = [
+                "Hello there! Ready to create something amazing in Blender today?",
+                "Hi! I'm here to help with your Blender project. What are we making?",
+                "Greetings! What would you like to create in Blender today?",
+                "Welcome! I'm ready to assist with your Blender designs.",
+                "Hey there! Excited to help with your Blender project today.",
+                "Good day! What Blender creation shall we work on?",
+                "Hi there! Looking forward to helping with your Blender work.",
+                "Hello! What Blender project are we diving into today?",
+                "Howdy! Ready when you are for some Blender magic.",
+                "Greetings! How can I assist with your Blender work today?"
+            ];
+            
+            // Function to get a new unique greeting
+            function getUniqueGreeting() {
+                // If we've used all greetings, reset the tracking
+                if (usedGreetings.size >= greetingVariations.length - 1) {
+                    usedGreetings.clear();
+                }
+                
+                // Find a greeting we haven't used yet
+                let greeting;
+                do {
+                    greeting = greetingVariations[Math.floor(Math.random() * greetingVariations.length)];
+                } while (usedGreetings.has(greeting));
+                
+                // Mark this greeting as used
+                usedGreetings.add(greeting);
+                return greeting;
+            }
+            
             // API Key update logic
             const apiKeyInput = document.getElementById('api-key-input');
             // Remove Save Key button from DOM and logic for minimal UI
             // Save Key button logic fully removed for minimal UI
             const apiKeyStatus = document.getElementById('api-key-status');
             const apiKeyDot = document.getElementById('api-key-dot');
+            
+            // Model selector elements
+            const modelSelector = document.getElementById('model-selector');
+            const applicationSelector = document.getElementById('application-selector');
 
             function setApiKeyStatus(color) {
                 apiKeyDot.classList.remove('loading'); // Remove loading animation
@@ -715,6 +837,65 @@
             let apiKeyCheckTimeout = null;
             let lastApiKey = '';
             let helloSentForKey = {};
+            let currentModel = modelSelector.value;
+            
+            // Handle model selection changes
+            modelSelector.addEventListener('change', function() {
+                const newModel = this.value;
+                if (newModel === currentModel) return;
+                
+                // Only attempt to verify if we have a valid API key
+                if (apiKeyValid && apiKeyInput.value.trim()) {
+                    // Show loading state
+                    apiKeyDot.classList.remove('valid');
+                    apiKeyDot.classList.add('loading');
+                    
+                    // Verify the new model works with the API key
+                    setTimeout(async () => {
+                        try {
+                            const response = await fetch('http://localhost:3002/llm-agent', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    prompt: 'model check', 
+                                    apiKey: apiKeyInput.value.trim(),
+                                    model: newModel
+                                })
+                            });
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (data && data.message) {
+                                    // Success - update current model and status
+                                    currentModel = newModel;
+                                    setApiKeyStatus('#2ecc40');
+                                    
+                                    // Add a small system message
+                                    addMessageToUI(llmMessagesContainer, 'assistant', `I've switched to ${modelSelector.options[modelSelector.selectedIndex].text}. How can I help you with Blender today?`);
+                                } else {
+                                    // Failure - revert selection and show error
+                                    setApiKeyStatus('#d32f2f');
+                                    modelSelector.value = currentModel;
+                                    addMessageToUI(llmMessagesContainer, 'assistant', `I couldn't switch to that model. Let's continue with the current one.`);
+                                }
+                            } else {
+                                // HTTP error
+                                setApiKeyStatus('#d32f2f');
+                                modelSelector.value = currentModel;
+                                addMessageToUI(llmMessagesContainer, 'assistant', `There was an error switching models. Let's continue with the current one.`);
+                            }
+                        } catch (error) {
+                            // Network or other error
+                            setApiKeyStatus('#d32f2f');
+                            modelSelector.value = currentModel;
+                            addMessageToUI(llmMessagesContainer, 'assistant', `There was an error switching models. Let's continue with the current one.`);
+                        }
+                    }, 300);
+                } else {
+                    // No valid API key, just update the current model
+                    currentModel = newModel;
+                }
+            });
             
             // Disable the chat input and send button until a valid API key is provided
             document.getElementById('llm-user-input').disabled = true;
@@ -776,7 +957,11 @@
                                 const helloResponse = await fetch('http://localhost:3002/llm-agent', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ prompt: 'hello', apiKey: key })
+                                    body: JSON.stringify({ 
+                                        prompt: 'hello', 
+                                        apiKey: key,
+                                        model: modelSelector.value
+                                    })
                                 });
                                 if (helloResponse.ok) {
                                     const helloData = await helloResponse.json();
@@ -788,14 +973,15 @@
                                         llmSendButton.disabled = false;
                                         document.getElementById('llm-user-input').disabled = false;
                                         apiKeyValid = true;
-                                        llmSendButton.disabled = false;
-                                        // Enable the chat input field now that we have a valid API key
-                                        document.getElementById('llm-user-input').disabled = false;
+                                        // Enable the model selectors as well
+                                        document.getElementById('model-selector').disabled = false;
+                                        document.getElementById('application-selector').disabled = false;
                                         // Only show hello if not already shown for this key
                                         if (!helloSentForKey[key]) {
                                             helloSentForKey[key] = true;
                                             lastApiKey = key;
-                                            addMessageToUI(llmMessagesContainer, 'assistant', helloData.message);
+                                            // Use a unique greeting message instead of the API response
+                                            addMessageToUI(llmMessagesContainer, 'assistant', getUniqueGreeting());
                                         }
                                     } else {
                                         setApiKeyStatus('#d32f2f');
@@ -1035,7 +1221,11 @@
                     const response = await fetch('http://localhost:3002/llm-agent', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: userMessageText, apiKey })
+                        body: JSON.stringify({ 
+                            prompt: userMessageText, 
+                            apiKey, 
+                            model: modelSelector.value 
+                        })
                     });
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({ error: { message: `HTTP error! status: ${response.status}` } }));

@@ -4869,3 +4869,271 @@ Direct JSON parsing succeeded
 }
 Attempting to parse LLM response JSON
 Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747189350-8DABa3OylqYDw1z2kSxn",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747189350,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}",
+        "refusal": null,
+        "reasoning": "**Analyzing Initial Query's Intent**\n\nHmm, \"hello\" indeed. The user's simple greeting isn't about Blender commands, as I expected. The instructions stress enthusiasm, then pivoting back to Blender! Let's do that.\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 77,
+    "total_tokens": 2640
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747189358-kn5dbnv24BUB7QJHpw12",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747189358,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"type\": \"statement\",\n  \"message\": \"Ready to assist with your Blender projects! What can we create or modify today?\"\n}",
+        "refusal": null,
+        "reasoning": "**Acknowledging the Request**\n\nI see the user is checking my ability to do model-checking. That isn't a Blender command, it's a request for my functional status. Time to offer a simple, helpful response.\n\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2564,
+    "completion_tokens": 79,
+    "total_tokens": 2643
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747189363-FvpQyruOoisrZletWmKK",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747189363,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}\n```",
+        "refusal": null,
+        "reasoning": "**Assessing the Greeting**\n\nOkay, the user's \"hello\" is noted. I'm reviewing the instructions, particularly the part about general greetings versus Blender-related inquiries. Now formulating a response in the JSON format... and back to Blender we go!\n\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 133,
+    "total_tokens": 2696
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747189373-LGlmBxWT65YcEQ29eMTc",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747189373,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"blender_command\",\n  \"code\": \"import bpy\\n\\n# Get all objects in the scene\\nobjs = list(bpy.data.objects)\\n\\n# Iterate and remove each object\\nfor obj in objs:\\n    bpy.data.objects.remove(obj, do_unlink=True)\\n\\n# Optional: Reset world to default if needed, but removing objects is the core request\\n# bpy.context.scene.world = bpy.data.worlds.new(\\\"World\\\")\\n# bpy.context.scene.world.use_nodes = True\\n\\nprint(\\\"Scene cleared: All objects removed.\\\")\",\n  \"message\": \"The scene is now cleared of all objects. A fresh canvas awaits your design!\"\n}\n```",
+        "refusal": null,
+        "reasoning": "**Focusing: Scene Deletion Logic**\n\nOkay, the user wants to clear a Blender scene.  My thoughts are on how to actually do it, considering all the data blocks.  Iterate through `bpy.data.objects` and *remove* them.  Simple.\n\n \n \n\n\n**Refining Scene Wipe Logic**\n\nRight, the user wants to \"clear the scene.\" Deleting all objects, collections (except the master scene), and other datablocks seems like overkill initially, according to the query. So first, I need to delete all objects using `bpy.data.objects.remove(obj, do_unlink=True)`.\n\n \n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2565,
+    "completion_tokens": 521,
+    "total_tokens": 3086
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+Pre-sanitized code: import bpy
+
+# Get all objects in the scene
+objs = list(bpy.data.objects)
+
+# Iterate and remove each object
+for obj in objs:
+    bpy.data.objects.remove(obj, do_unlink=True)
+
+# Optional: Reset world to default if needed, but removing objects is the core request
+# bpy.context.scene.world = bpy.data.worlds.new("World")
+# bpy.context.scene.world.use_nodes = True
+
+print("Scene cleared: All objects removed.")
+Post-sanitized code: import bpy
+
+# Get all objects in the scene
+objs = list(bpy.data.objects)
+
+# Iterate and remove each object
+for obj in objs:
+    bpy.data.objects.remove(obj, do_unlink=True)
+
+# Optional: Reset world to default if needed, but removing objects is the core request
+# bpy.context.scene.world = bpy.data.worlds.new("World")
+# bpy.context.scene.world.use_nodes = True
+
+print("Scene cleared: All objects removed.")
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747189382-vajQfvhRNXhEqtlWTSPs",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747189382,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Ready to create and refine your designs in Blender!\"\n}\n```",
+        "refusal": null,
+        "reasoning": "**Readying for Response**\n\nThe user's request is for a model check, a test of my capabilities. Confirming readiness is key, as they are looking for a friendly message. \n\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2564,
+    "completion_tokens": 70,
+    "total_tokens": 2634
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747189704-E5f9kLOmXmRoLRJAutBa",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747189704,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}\n```",
+        "refusal": null,
+        "reasoning": "**Assessing the Input**\n\nThe user's simple \"hello\" needs analyzing. The instructions clearly outline how I should flag this as a 'statement'. I'll format it as a message and gracefully redirect back to the Blender domain.\n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 101,
+    "total_tokens": 2664
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747190119-JCSEHYzLvQQWxLMvaHbR",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747190119,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Hello! Ready to create something amazing in Blender today?\"\n}\n```",
+        "refusal": null,
+        "reasoning": "Thinking... \n\n**Analyzing the Query's Nature**\n\nThe user's \"hello\" is a simple greeting, as noted in their query. It's not a request for information or action, which I must consider.\n\n \n \n\n\n**Processing User Input**\n\nThe user's \"hello\" is confirmed as a simple statement, as reflected in their query. It's a greeting, not an instruction.\n \n \n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2563,
+    "completion_tokens": 116,
+    "total_tokens": 2679
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
+--- /llm-agent endpoint hit ---
+--- Raw OpenRouter API Response ---
+{
+  "id": "gen-1747190126-sL9HWvHdW1L5o8xeRikf",
+  "provider": "Google",
+  "model": "google/gemini-2.5-flash-preview:thinking",
+  "object": "chat.completion",
+  "created": 1747190126,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"type\": \"statement\",\n  \"message\": \"Ready to assist! What can we create or refine in Blender today?\"\n}\n```",
+        "refusal": null,
+        "reasoning": "Thinking... \n\n**Analyzing the Query's Intent**\n\nOkay, so the user wants a \"model check,\" which immediately makes me think, \"Not a standard Blender function.\" This is crucial, as I must understand the user's actual meaning, given their expert-level understanding.\n\n \n\n\n**Considering User's Request**\n\nI see the user wants a \"model check,\" and the instructions outline that this is a general question. The task is to provide a friendly response and refocus on Blender functionality. Sounds easy.\n\n \n\n\n"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2564,
+    "completion_tokens": 210,
+    "total_tokens": 2774
+  }
+}
+Attempting to parse LLM response JSON
+Direct JSON parsing succeeded
