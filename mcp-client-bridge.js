@@ -25,7 +25,8 @@ try {
 const app = express();
 const PORT = 3002;
 const BLENDER_HOST = 'localhost';
-const BLENDER_PORT = 9876;
+// Updated to use our proxy port instead of connecting directly to Blender MCP
+const BLENDER_PORT = 3100; // Changed from 9876 to use our proxy
 
 
 // BYOK: No API key is ever loaded from .env or hardcoded. Key must be provided by the frontend per request.
@@ -403,9 +404,9 @@ for obj in bpy.context.scene.objects:
     if len(obj.users_collection) == 0:
         try:
             main_collection.objects.link(obj)
-            print(f"Added {obj.name} to the main collection")
+            print(f"Added ${obj.name} to the main collection")
         except Exception as e:
-            print(f"Could not add {obj.name} to collection: {e}")
+            print(f"Could not add ${obj.name} to collection: ${e}")
 `;
       }
       

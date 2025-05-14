@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Blender MCP Interface</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧊</text></svg>">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+        
+        .api-key-section {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .api-key-section input {
+            flex: 1;
+            min-width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot {
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .disconnected {
+            background-color: #e74c3c;
+        }
+
+        .connected {
+            background-color: #2ecc71;
+            box-shadow: 0 0 5px #2ecc71;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+            }
+        }
+
+        .code-area {
+            display: flex;
+            height: calc(100% - 130px);
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        .response-area {
+            flex: 1;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-left: 15px;
+            background-color: #f5f5f5;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .examples {
+            margin-top: 20px;
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .example {
+            cursor: pointer;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .example:hover {
+            text-decoration: underline;
+        }
+        
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        
+        code {
+            font-family: 'Consolas', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Blender MCP Interface</h1>
+    
+    <div class="container">
+        <div class="status">
+            <div class="status-indicator">
+                <span id="status-dot" class="status-dot disconnected"></span>
+                <span id="status-text">Disconnected</span>
+            </div>
+            <button id="connect-button">Connect to Blender</button>
+        </div>
+        
+        <div class="api-key-section">
+            <label for="api-key">OpenRouter API Key:</label>
+            <input type="text" id="api-key" placeholder="Enter your OpenRouter API key" value="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" />
+            <button id="save-api-key">Save API Key</button>
+        </div>
+        
+        <div class="code-area">
+            <textarea id="code-input" placeholder="Enter Python code for Blender here...
+
+# Example:
+import bpy
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))
+cube = bpy.context.active_object
+cube.name = 'MyCube'
+print(f'Created cube: {cube.name}')"></textarea>
+            <div class="response-area" id="response-output">Response will appear here...</div>
+        </div>
+        
+        <div class="controls">
+            <div>
+                <button id="execute-button" disabled>Execute Code</button>
+                <button id="clear-button">Clear</button>
+            </div>
+            <div>
+                <button id="get-scene-info">Get Scene Info</button>
+            </div>
+        </div>
+        
+        <div class="examples">
+            <h3>Quick Examples:</h3>
+            <div class="example" data-code="import bpy
+
+# Create a cube
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))
+cube = bpy.context.active_object
+cube.name = 'MyCube'
+
+# Add a material
+mat = bpy.data.materials.new(name='BlueMaterial')
+mat.use_nodes = True
+principled_bsdf = mat.node_tree.nodes.get('Principled BSDF')
+if principled_bsdf:
+    principled_bsdf.inputs[0].default_value = (0.0, 0.2, 0.8, 1.0)  # Blue color
+
+# Assign material to cube
+if cube.data.materials:
+    cube.data.materials[0] = mat
+else:
+    cube.data.materials.append(mat)
+
+print('Created blue cube!')">Create Blue Cube</div>
+            
+            <div class="example" data-code="import bpy
+
+# Create a simple scene with multiple objects
+bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0))
+cube = bpy.context.active_object
+cube.name = 'Cube'
+
+bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(3, 0, 0))
+sphere = bpy.context.active_object
+sphere.name = 'Sphere'
+
+bpy.ops.mesh.primitive_cylinder_add(radius=0.5, depth=2, location=(0, 3, 0))
+cylinder = bpy.context.active_object
+cylinder.name = 'Cylinder'
+
+bpy.ops.mesh.primitive_cone_add(radius1=1, depth=2, location=(-3, 0, 0))
+cone = bpy.context.active_object
+cone.name = 'Cone'
+
+print('Created basic shapes!')">Create Basic Shapes</div>
+            
+            <div class="example" data-code="import bpy
+
+# Get active camera or create one if none exists
+if bpy.context.scene.camera:
+    camera = bpy.context.scene.camera
+else:
+    bpy.ops.object.camera_add(location=(0, -10, 5))
+    camera = bpy.context.active_object
+    camera.rotation_euler = (0.9, 0, 0)  # Point toward origin
+    bpy.context.scene.camera = camera
+
+# Set camera to look at scene center
+camera.name = 'MainCamera'
+
+# Create a sun light if needed
+if not any(obj.type == 'LIGHT' for obj in bpy.data.objects):
+    bpy.ops.object.light_add(type='SUN', location=(5, 5, 10))
+    sun = bpy.context.active_object
+    sun.data.energy = 2.0
+    sun.name = 'SunLight'
+
+print('Camera and lighting set up!')">Setup Camera & Lighting</div>
+            
+            <div class="example" data-code="import bpy
+
+# Get scene information
+scene_info = {
+    'name': bpy.context.scene.name,
+    'objects': []
+}
+
+# Collect information about each object
+for obj in bpy.context.scene.objects:
+    obj_info = {
+        'name': obj.name,
+        'type': obj.type,
+        'location': [round(v, 2) for v in obj.location],
+        'visible': obj.visible_get()
+    }
+    scene_info['objects'].append(obj_info)
+    
+# Print the information
+print(f'Scene Name: {scene_info[\"name\"]}')
+print(f'Object Count: {len(scene_info[\"objects\"])}')
+print('\\nObjects:')
+for obj in scene_info['objects']:
+    print(f'- {obj[\"name\"]} ({obj[\"type\"]}) at {obj[\"location\"]}')">List All Objects</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            const connectButton = document.getElementById('connect-button');
+            const codeInput = document.getElementById('code-input');
+            const responseOutput = document.getElementById('response-output');
+            const executeButton = document.getElementById('execute-button');
+            const clearButton = document.getElementById('clear-button');
+            const getSceneInfoButton = document.getElementById('get-scene-info');
+            const examples = document.querySelectorAll('.example');
+            const apiKeyInput = document.getElementById('api-key');
+            const saveApiKeyButton = document.getElementById('save-api-key');
+            
+            let connected = false;
+            let mcpPort = 1234; // Default Blender MCP port
+            
+            // Load API key on page load
+            fetch('/api/get-api-key')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.apiKey) {
+                        apiKeyInput.value = data.apiKey;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading API key:', error);
+                });
+            
+            // Update status display
+            function updateStatus(isConnected) {
+                connected = isConnected;
+                statusDot.className = isConnected ? 'status-dot connected' : 'status-dot disconnected';
+                statusText.textContent = isConnected ? 'Connected to Blender' : 'Disconnected';
+                connectButton.textContent = isConnected ? 'Disconnect' : 'Connect to Blender';
+                executeButton.disabled = !isConnected;
+                getSceneInfoButton.disabled = !isConnected;
+            }
+            
+            // Check connection to Blender MCP
+            function checkConnection() {
+                fetch(`/check-connection`)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateStatus(data.connected);
+                    })
+                    .catch(error => {
+                        console.error('Error checking connection:', error);
+                        updateStatus(false);
+                    });
+            }
+            
+            // Connect/disconnect to Blender MCP
+            connectButton.addEventListener('click', function() {
+                if (connected) {
+                    // Disconnect
+                    fetch('/disconnect', { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            updateStatus(false);
+                            responseOutput.textContent = 'Disconnected from Blender MCP.';
+                        })
+                        .catch(error => {
+                            console.error('Error disconnecting:', error);
+                        });
+                } else {
+                    // Connect
+                    fetch('/connect', { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                updateStatus(true);
+                                responseOutput.textContent = 'Connected to Blender MCP!';
+                            } else {
+                                responseOutput.textContent = `Failed to connect: ${data.error}\n\nMake sure Blender is running and the MCP addon is enabled.`;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error connecting:', error);
+                            responseOutput.textContent = 'Connection error. Is the server running?';
+                        });
+                }
+            });
+            
+            // Execute code
+            executeButton.addEventListener('click', function() {
+                const code = codeInput.value.trim();
+                if (!code) {
+                    responseOutput.textContent = 'Please enter some Python code first.';
+                    return;
+                }
+                
+                executeButton.disabled = true;
+                responseOutput.textContent = 'Executing...';
+                
+                fetch('/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Format the response for better readability
+                        let result = data.result?.result || data.result || 'Executed successfully.';
+                        
+                        // Escape HTML and format code blocks if needed
+                        if (typeof result === 'string') {
+                            responseOutput.textContent = result;
+                        } else {
+                            responseOutput.textContent = JSON.stringify(result, null, 2);
+                        }
+                    } else {
+                        responseOutput.textContent = `Error: ${data.error}`;
+                    }
+                    executeButton.disabled = !connected;
+                })
+                .catch(error => {
+                    console.error('Error executing code:', error);
+                    responseOutput.textContent = `Connection error: ${error.message}`;
+                    executeButton.disabled = !connected;
+                });
+            });
+            
+            // Clear code and response
+            clearButton.addEventListener('click', function() {
+                codeInput.value = '';
+                responseOutput.textContent = 'Response will appear here...';
+            });
+            
+            // Get scene information
+            getSceneInfoButton.addEventListener('click', function() {
+                getSceneInfoButton.disabled = true;
+                responseOutput.textContent = 'Getting scene information...';
+                
+                fetch('/scene-info')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            responseOutput.textContent = JSON.stringify(data.result, null, 2);
+                        } else {
+                            responseOutput.textContent = `Error: ${data.error}`;
+                        }
+                        getSceneInfoButton.disabled = !connected;
+                    })
+                    .catch(error => {
+                        console.error('Error getting scene info:', error);
+                        responseOutput.textContent = `Connection error: ${error.message}`;
+                        getSceneInfoButton.disabled = !connected;
+                    });
+            });
+            
+            // Save API key
+            saveApiKeyButton.addEventListener('click', function() {
+                const apiKey = apiKeyInput.value.trim();
+                
+                if (!apiKey || apiKey.length < 20) {
+                    responseOutput.textContent = 'Error: Please enter a valid API key.';
+                    return;
+                }
+                
+                fetch('/api/update-api-key', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ apiKey })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        responseOutput.textContent = 'API key saved successfully.';
+                    } else {
+                        responseOutput.textContent = `Error saving API key: ${data.error}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving API key:', error);
+                    responseOutput.textContent = `Error saving API key: ${error.message}`;
+                });
+            });
+            
+            // Handle examples
+            examples.forEach(example => {
+                example.addEventListener('click', function() {
+                    codeInput.value = this.getAttribute('data-code');
+                });
+            });
+            
+            // Check connection on page load
+            checkConnection();
+            
+            // Check connection status periodically
+            setInterval(checkConnection, 5000);
+        });
+    </script>
+</body>
+</html>
