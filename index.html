@@ -17,6 +17,35 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background animation - breathing pulse effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(231,242,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            z-index: -1;
+            animation: breathePulse 8s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes breathePulse {
+            0% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+            100% { opacity: 0.4; transform: scale(1); }
+        }
+        
+        /* Soft glow animation kept for input elements */
+        @keyframes softGlow {
+            0% { box-shadow: 0 0 5px rgba(33, 150, 243, 0.1); }
+            50% { box-shadow: 0 0 15px rgba(33, 150, 243, 0.2); }
+            100% { box-shadow: 0 0 5px rgba(33, 150, 243, 0.1); }
         }
 
         .api-key-container {
@@ -131,26 +160,52 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            margin: 0 5px;
         }
 
         .message {
-            padding: 15px;
-            border-radius: 10px;
+            padding: 12px 24px;
+            border-radius: 24px;
             max-width: 85%;
             word-break: break-word;
             line-height: 1.6;
+            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            animation: messageFadeIn 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+            opacity: 0;
+            will-change: opacity, transform;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            /* Prevent layout shifts and improve rendering performance */
+            contain: layout style;
+        }
+
+        @keyframes messageFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .user {
-            background-color: #e1f5fe;
             align-self: flex-end;
-            border-bottom-right-radius: 0;
+            background-color: #f9f9f9;
+            border-radius: 24px;
+            border: 1px solid #f0f0f0;
+            animation-delay: 0.1s;
+            transform-origin: bottom right;
+            /* Prevent jumping by ensuring consistent dimensions */
+            min-height: 24px;
         }
 
         .assistant {
-            background-color: #f0f0f0;
             align-self: flex-start;
-            border-bottom-left-radius: 0;
+            background-color: #ffffff;
+            border-radius: 24px;
+            border: none;
+            animation-delay: 0.3s;
+            transform-origin: bottom left;
+            /* Prevent jumping by ensuring consistent dimensions */
+            min-height: 24px;
+            /* Smooth fade-in/out for background color changes */
+            transition: background-color 0.4s ease, transform 0.3s ease;
         }
 
         .input-area {
@@ -196,13 +251,16 @@
             height: 54px;
             font-size: 16px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            backface-visibility: hidden;
         }
         
         .input-area textarea:focus {
             outline: none;
             border-color: #2196f3;
             box-shadow: 0 2px 8px rgba(33,150,243,0.2);
+            transform: translateY(-1px);
+            animation: softGlow 3s infinite ease-in-out;
         }
 
         .input-area button {
@@ -265,10 +323,20 @@
         .input-area button:hover {
             background-color: #0b7dda;
             transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+            animation: pulse 1s infinite ease-in-out;
         }
         
         .input-area button:active {
             transform: scale(0.95);
+            box-shadow: 0 0 5px rgba(33, 150, 243, 0.1);
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 8px rgba(33, 150, 243, 0.2); }
+            50% { box-shadow: 0 0 15px rgba(33, 150, 243, 0.4); }
+            100% { box-shadow: 0 0 8px rgba(33, 150, 243, 0.2); }
         }
 
         button:hover {
@@ -307,44 +375,71 @@
         }
 
         .typing-indicator {
+            position: relative;
+            align-self: flex-start;
+            margin: 15px 0 0 24px;
+            width: 30px;
+            height: 20px;
             display: flex;
             align-items: center;
-            gap: 5px;
-            padding: 10px 15px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            align-self: flex-start;
-            margin-top: 5px;
+            justify-content: center;
+            animation: fadeInTyping 0.4s ease forwards;
+            background: transparent;
+            z-index: 1;
+            transform-origin: left center;
+            box-sizing: border-box;
+            will-change: opacity, transform;
+            border-radius: 24px;
+        }
+        
+        @keyframes fadeInTyping {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background-color: #666;
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(33, 150, 243, 0.7);
             border-radius: 50%;
-            display: inline-block;
-            animation: bounce 1.5s infinite ease-in-out;
+            display: block;
+            animation: pulse-typing 2s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: 0 0 8px rgba(33, 150, 243, 0.3);
         }
 
-        .typing-indicator span:nth-child(1) {
-            animation-delay: 0s;
+        .typing-indicator span:before,
+        .typing-indicator span:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(33, 150, 243, 0.3);
+            border-radius: 50%;
+            z-index: -1;
+            transform: scale(1);
+            opacity: 1;
+            animation: pulse-rings 2s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-indicator span:nth-child(3) {
+        .typing-indicator span:after {
             animation-delay: 0.4s;
         }
 
-        @keyframes bounce {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-5px);
-            }
+        @keyframes pulse-typing {
+            0% { transform: scale(0.7); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(0.7); opacity: 0.5; }
+        }
+        
+        @keyframes pulse-rings {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        
+        @keyframes pulse-rings {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(2); opacity: 0; }
         }
 
         pre {
@@ -443,7 +538,7 @@
             }
         }
 
-        /* Simple progress bar below the chat input */
+        /* Simple progress bar below the chat input - hidden but kept for future use */
         .progress-container {
             width: 100%;
             height: 4px;
@@ -451,7 +546,7 @@
             border-radius: 2px;
             margin-bottom: 10px;
             overflow: hidden;
-            display: none;
+            display: none; /* Hidden by default */
         }
         .progress-container.visible {
             display: block;
@@ -473,8 +568,8 @@
     <!-- API Key Update UI -->
     <div class="api-key-container">
         <input type="text" id="api-key-input" placeholder="Enter OpenRouter API key" autocomplete="off" />
+        <span id="api-key-status" style="display:flex;align-items:center;margin:0 0 0 8px;"><span id="api-key-dot" style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#aaa;"></span></span>
         <a href="https://openrouter.ai/docs/faq" target="_blank" class="api-key-link" title="How to get a key" style="display:flex;align-items:center;margin:0 0 0 8px;text-decoration:none;"><span class="help-icon" style="display:inline-flex;justify-content:center;align-items:center;width:15px;height:15px;font-size:11px;border-radius:50%;background:#e9e9e9;color:#555;box-shadow:0 1px 2px rgba(0,0,0,0.04);font-weight:500;letter-spacing:0.2px;text-decoration:none;">?</span></a>
-        <span id="api-key-status" style="display:flex;align-items:center;margin:0 0 0 12px;"><span id="api-key-dot" style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#aaa;"></span></span>
     </div>
 
     <div id="chat-container" class="chat-container" style="margin-top:8px; height: calc(100vh - 60px); display: flex; flex-direction: column;">
@@ -487,10 +582,40 @@
         <div class="input-area">
             <textarea id="llm-user-input" placeholder="Design with words..."></textarea>
             <button id="llm-send-button" title="Send">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="send-icon">
                   <polyline points="6 15 12 9 18 15" />
                 </svg>
+                <span class="send-ripple"></span>
             </button>
+            
+            <style>
+                .send-icon {
+                    position: relative;
+                    z-index: 2;
+                    transition: transform 0.3s ease;
+                }
+                
+                .send-ripple {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(0);
+                    width: 54px;
+                    height: 54px;
+                    background: rgba(255, 255, 255, 0.3);
+                    border-radius: 50%;
+                    z-index: 1;
+                }
+                
+                #llm-send-button:active .send-ripple {
+                    animation: ripple 0.6s linear;
+                }
+                
+                @keyframes ripple {
+                    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+                }
+            </style>
         </div>
         <div class="progress-container" id="progress-container">
             <div class="progress-bar" id="progress-bar"></div>
@@ -501,6 +626,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Removed hover effects and bubble animations to keep the UI clean and minimal
+            
             // API Key update logic
             const apiKeyInput = document.getElementById('api-key-input');
             // Remove Save Key button from DOM and logic for minimal UI
@@ -534,11 +661,15 @@
                     const end = apiKeyInput.selectionEnd;
                     // Change to password type
                     apiKeyInput.type = 'password';
+                    // Apply lighter color to masked text
+                    apiKeyInput.style.color = '#999';
                     // Restore selection
                     apiKeyInput.setSelectionRange(start, end);
                 } else {
                     // If empty, show as text field
                     apiKeyInput.type = 'text';
+                    // Reset to default color
+                    apiKeyInput.style.color = '';
                 }
             }
             
@@ -667,9 +798,96 @@
             function addMessageToUI(container, role, content) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', role);
-    messageDiv.innerHTML = formatMessageContent(content);
-    container.appendChild(messageDiv);
-    // Default: always scroll to bottom (remove custom scroll logic)
+    
+    // Different handling based on message role
+    if (role === 'assistant') {
+        // For assistant messages, prepare for letter-by-letter animation
+        messageDiv.innerHTML = ''; // Start empty
+        container.appendChild(messageDiv);
+        
+        // Animate text appearing letter by letter
+        const formattedContent = formatMessageContent(content);
+        let tempDiv = document.createElement('div');
+        tempDiv.innerHTML = formattedContent;
+        
+        // Handle code blocks and regular text differently
+        const nodes = Array.from(tempDiv.childNodes);
+        let charIndex = 0;
+        let currentNode = 0;
+        
+        // Create a recursive function to process nodes
+        function processNode(node, parentElement) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                // Text node - animate character by character
+                const text = node.textContent;
+                const textHolder = document.createTextNode('');
+                parentElement.appendChild(textHolder);
+                
+                function animateText(index) {
+                    if (index < text.length) {
+                        textHolder.textContent += text[index];
+                        setTimeout(() => animateText(index + 1), 5 + Math.random() * 10); // Slightly variable speed
+                    } else if (currentNode < nodes.length - 1) {
+                        // Move to next node when finished with this text
+                        currentNode++;
+                        processNode(nodes[currentNode], messageDiv);
+                    }
+                    // Scroll as text appears
+                    container.scrollTop = container.scrollHeight;
+                }
+                
+                if (charIndex === 0) {
+                    // Start the animation for the first node
+                    animateText(0);
+                }
+                charIndex++;
+                
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Element node (like <pre>, <code>, etc.)
+                if (node.tagName === 'PRE') {
+                    // Special handling for code blocks - add with subtle fade in
+                    const clone = node.cloneNode(true);
+                    clone.style.opacity = '0';
+                    parentElement.appendChild(clone);
+                    
+                    // Simple fade-in for code blocks
+                    setTimeout(() => {
+                        clone.style.transition = 'opacity 0.8s ease';
+                        clone.style.opacity = '1';
+                    }, 100);
+                    
+                    // Continue with next node after code block is added
+                    if (currentNode < nodes.length - 1) {
+                        currentNode++;
+                        setTimeout(() => {
+                            processNode(nodes[currentNode], messageDiv);
+                        }, 300);
+                    }
+                } else {
+                    // Other elements - clone and process children
+                    const clone = node.cloneNode(false);
+                    parentElement.appendChild(clone);
+                    
+                    // Process child nodes
+                    for (const child of node.childNodes) {
+                        processNode(child, clone);
+                    }
+                }
+            }
+        }
+        
+        // Start processing nodes
+        if (nodes.length > 0) {
+            processNode(nodes[0], messageDiv);
+        }
+        
+    } else {
+        // For user messages, no animation needed
+        messageDiv.innerHTML = formatMessageContent(content);
+        container.appendChild(messageDiv);
+    }
+    
+    // Always scroll to bottom
     setTimeout(() => {
         container.scrollTop = container.scrollHeight;
     }, 0);
@@ -713,6 +931,27 @@
                 llmSendButton.disabled = true;
                 llmUserInput.disabled = true;
                 
+                // Add typing indicator - now a pulsing circle with improved positioning
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'typing-indicator';
+                typingIndicator.innerHTML = '<span></span>';
+                
+                // Create a wrapper to ensure consistent spacing
+                const indicatorWrapper = document.createElement('div');
+                indicatorWrapper.style.minHeight = '30px';
+                indicatorWrapper.style.position = 'relative';
+                indicatorWrapper.appendChild(typingIndicator);
+                
+                llmMessagesContainer.appendChild(indicatorWrapper);
+                
+                // Ensure smooth scrolling to the typing indicator
+                setTimeout(() => {
+                    llmMessagesContainer.scrollTo({
+                        top: llmMessagesContainer.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }, 50);
+                
                 try {
                     const response = await fetch('http://localhost:3002/llm-agent', {
                         method: 'POST',
@@ -724,9 +963,205 @@
                         throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
                     }
                 const data = await response.json();
+                
+                // Get the typing indicator and its wrapper for a fluid transition
+                const typingIndicator = llmMessagesContainer.querySelector('.typing-indicator');
+                const typingIndicatorWrapper = typingIndicator ? typingIndicator.parentNode : null;
+                
                 // Always show the LLM's message field (for both code and non-code responses)
                 if (data.message) {
-                    addMessageToUI(llmMessagesContainer, 'assistant', data.message);
+                    // Create the message div that will contain the text
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message', 'assistant');
+                    messageDiv.style.opacity = '0';
+                    
+                    // Get the position of the typing indicator for a seamless transition
+                    const indicatorRect = typingIndicator ? typingIndicator.getBoundingClientRect() : null;
+                    const containerRect = llmMessagesContainer.getBoundingClientRect();
+                    
+                    // Create a placeholder to maintain scrolling position
+                    const placeholderDiv = document.createElement('div');
+                    placeholderDiv.style.height = typingIndicatorWrapper ? `${typingIndicatorWrapper.offsetHeight}px` : '30px';
+                    placeholderDiv.style.opacity = '0';
+                    placeholderDiv.style.pointerEvents = 'none';
+                    
+                    // Position the message div at the typing indicator's location
+                    if (indicatorRect && typingIndicatorWrapper) {
+                        messageDiv.style.position = 'absolute';
+                        messageDiv.style.left = '24px'; // Match the typing indicator margin-left
+                        messageDiv.style.top = (indicatorRect.top - containerRect.top) + 'px';
+                        messageDiv.style.paddingLeft = '24px'; // Match horizontal padding of oval shape
+                        messageDiv.style.background = 'none';
+                        messageDiv.style.minHeight = `${typingIndicatorWrapper.offsetHeight}px`;
+                        messageDiv.style.margin = '15px 0 0 0';
+                        messageDiv.style.borderRadius = '24px';
+                        
+                        // Add placeholder where typing indicator was to prevent content jumping
+                        llmMessagesContainer.insertBefore(placeholderDiv, typingIndicatorWrapper);
+                    }
+                    
+                    // Append the message div
+                    llmMessagesContainer.appendChild(messageDiv);
+                    
+                    // Add a minimal delay to start the transition
+                    setTimeout(() => {
+                        // Fade out typing indicator gradually as text appears
+                        if (typingIndicator && typingIndicatorWrapper) {
+                            typingIndicator.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                            typingIndicator.style.opacity = '0';
+                            typingIndicator.style.transform = 'scale(0.5)';
+                            
+                            // Remove only after text starts appearing
+                            setTimeout(() => {
+                                // Remove the wrapper containing the typing indicator
+                                if (typingIndicatorWrapper.parentNode === llmMessagesContainer) {
+                                    llmMessagesContainer.removeChild(typingIndicatorWrapper);
+                                }
+                                
+                                // Remove placeholder after transition is complete with a smoother animation
+                                if (placeholderDiv.parentNode) {
+                                    // Save the current scroll position
+                                    const scrollPos = llmMessagesContainer.scrollTop;
+                                    
+                                    placeholderDiv.style.transition = 'height 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                                    placeholderDiv.style.height = '0';
+                                    
+                                    // Restore scroll position to prevent jumping during removal
+                                    llmMessagesContainer.scrollTop = scrollPos;
+                                    
+                                    setTimeout(() => {
+                                        if (placeholderDiv.parentNode) {
+                                            placeholderDiv.parentNode.removeChild(placeholderDiv);
+                                            
+                                            // Final scroll position adjustment after all transitions
+                                            llmMessagesContainer.scrollTo({
+                                                top: llmMessagesContainer.scrollHeight,
+                                                behavior: 'smooth'
+                                            });
+                                        }
+                                    }, 400);
+                                }
+                            }, 600);
+                        }
+                        
+                        // Start the text animation
+                        const formattedContent = formatMessageContent(data.message);
+                        let tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = formattedContent;
+                        
+                        // Prepare for animation with improved timing function
+                        messageDiv.style.transition = 'all 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+                        messageDiv.style.opacity = '1';
+                        
+                        // After first few characters appear, transition to normal message position
+                        setTimeout(() => {
+                            // Save the scroll position before changing layout
+                            const scrollPos = llmMessagesContainer.scrollTop;
+                            
+                            messageDiv.style.position = 'relative';
+                            messageDiv.style.top = 'auto';
+                            messageDiv.style.left = 'auto';
+                            messageDiv.style.padding = '12px 24px';
+                            messageDiv.style.background = '#ffffff';
+                            messageDiv.style.borderRadius = '24px';
+                            
+                            // Restore scroll position to prevent jumping
+                            llmMessagesContainer.scrollTop = scrollPos;
+                        }, 400);
+                        
+                        // Handle code blocks and regular text for animation with smoother scrolling
+                        const nodes = Array.from(tempDiv.childNodes);
+                        let charIndex = 0;
+                        let currentNode = 0;
+                        
+                        // For smoother animation, pre-calculate approximate height
+                        const textLength = data.message.length;
+                        const estimatedLineCount = Math.ceil(textLength / 80); // Rough estimate of chars per line
+                        const estimatedHeight = Math.max(50, estimatedLineCount * 24); // Approximate height in pixels
+                        
+                        // Pre-size the message div to prevent shifting
+                        if (!messageDiv.style.minHeight) {
+                            messageDiv.style.minHeight = `${Math.min(200, estimatedHeight)}px`;
+                        }
+                        
+                        function processNode(node, parentElement) {
+                            // Enhanced process function for smoother animations
+                            if (node.nodeType === Node.TEXT_NODE) {
+                                const text = node.textContent;
+                                const textHolder = document.createTextNode('');
+                                parentElement.appendChild(textHolder);
+                                
+                                // Maintain a consistent scroll position during animation
+                                let lastScrollUpdate = 0;
+                                
+                                function animateText(index) {
+                                    if (index < text.length) {
+                                        textHolder.textContent += text[index];
+                                        
+                                        // Throttle scroll updates for performance
+                                        const now = Date.now();
+                                        if (now - lastScrollUpdate > 100) {
+                                            lastScrollUpdate = now;
+                                            // Smooth scroll only when near bottom
+                                            const isNearBottom = llmMessagesContainer.scrollHeight - llmMessagesContainer.scrollTop - llmMessagesContainer.clientHeight < 50;
+                                            if (isNearBottom) {
+                                                llmMessagesContainer.scrollTo({
+                                                    top: llmMessagesContainer.scrollHeight,
+                                                    behavior: 'smooth'
+                                                });
+                                            }
+                                        }
+                                        
+                                        // Variable speed based on character type for more natural typing
+                                        let delay = 5;
+                                        if ('.!?:;'.includes(text[index])) delay = 30; // Pause longer at punctuation
+                                        else if (text[index] === ' ') delay = 15; // Slight pause at spaces
+                                        else delay = 5 + Math.random() * 5; // Normal characters
+                                        
+                                        setTimeout(() => animateText(index + 1), delay);
+                                    } else if (currentNode < nodes.length - 1) {
+                                        currentNode++;
+                                        processNode(nodes[currentNode], messageDiv);
+                                    }
+                                }
+                                
+                                if (charIndex === 0) {
+                                    animateText(0);
+                                }
+                                charIndex++;
+                                
+                            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                                if (node.tagName === 'PRE') {
+                                    const clone = node.cloneNode(true);
+                                    clone.style.opacity = '0';
+                                    parentElement.appendChild(clone);
+                                    
+                                    setTimeout(() => {
+                                        clone.style.transition = 'opacity 0.8s ease';
+                                        clone.style.opacity = '1';
+                                    }, 100);
+                                    
+                                    if (currentNode < nodes.length - 1) {
+                                        currentNode++;
+                                        setTimeout(() => {
+                                            processNode(nodes[currentNode], messageDiv);
+                                        }, 300);
+                                    }
+                                } else {
+                                    const clone = node.cloneNode(false);
+                                    parentElement.appendChild(clone);
+                                    
+                                    for (const child of node.childNodes) {
+                                        processNode(child, clone);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (nodes.length > 0) {
+                            processNode(nodes[0], messageDiv);
+                        }
+                    }, 200);
                 } else {
                     // fallback for legacy/edge cases
                     let code = data.code || '';
@@ -743,7 +1178,11 @@
                         data.blenderResult?.output ||
                         data.result ||
                         '[No response from Blender]';
-                    addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
+                    
+                    // Add a small delay for better UX
+                    setTimeout(() => {
+                        addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
+                    }, 400);
                 }
                 // No status text for minimal UI
                 } catch (error) {
