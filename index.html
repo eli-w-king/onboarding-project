@@ -5,11 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenRouter Chat</title>
     <style>
+        @font-face {
+            font-family: 'Supreme';
+            src: url('Supreme-font-WEB/fonts/Supreme-Regular.woff2') format('woff2'),
+                 url('Supreme-font-WEB/fonts/Supreme-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Supreme';
+            src: url('Supreme-font-WEB/fonts/Supreme-Extralight.woff2') format('woff2'),
+                 url('Supreme-font-WEB/fonts/Supreme-Extralight.woff') format('woff');
+            font-weight: 200;
+            font-style: normal;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Supreme', sans-serif;
         }
 
         body {
@@ -21,25 +37,7 @@
             overflow: hidden;
         }
 
-        /* Background animation - breathing pulse effect */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(231,242,255,0.2) 0%, rgba(255,255,255,0) 70%);
-            z-index: -1;
-            animation: breathePulse 8s ease-in-out infinite;
-            opacity: 0.7;
-        }
-
-        @keyframes breathePulse {
-            0% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.05); }
-            100% { opacity: 0.4; transform: scale(1); }
-        }
+        /* Background animation removed */
         
         /* Soft glow animation kept for input elements */
         @keyframes softGlow {
@@ -92,6 +90,8 @@
         .api-key-container input::placeholder {
             text-align: left;
             color: #999;
+            font-family: 'Supreme', sans-serif;
+            font-weight: 200;
         }
         
         .api-key-container input:focus {
@@ -164,8 +164,8 @@
         }
 
         .message {
-            padding: 12px 24px;
-            border-radius: 24px;
+            padding: 16px 32px;
+            border-radius: 48px;
             max-width: 85%;
             word-break: break-word;
             line-height: 1.6;
@@ -177,6 +177,9 @@
             backface-visibility: hidden;
             /* Prevent layout shifts and improve rendering performance */
             contain: layout style;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
         }
 
         @keyframes messageFadeIn {
@@ -187,23 +190,23 @@
         .user {
             align-self: flex-end;
             background-color: #f9f9f9;
-            border-radius: 24px;
+            border-radius: 48px;
             border: 1px solid #f0f0f0;
             animation-delay: 0.1s;
             transform-origin: bottom right;
             /* Prevent jumping by ensuring consistent dimensions */
-            min-height: 24px;
+            min-height: 56px;
         }
 
         .assistant {
             align-self: flex-start;
             background-color: #ffffff;
-            border-radius: 24px;
+            border-radius: 48px;
             border: none;
             animation-delay: 0.3s;
             transform-origin: bottom left;
             /* Prevent jumping by ensuring consistent dimensions */
-            min-height: 24px;
+            min-height: 56px;
             /* Smooth fade-in/out for background color changes */
             transition: background-color 0.4s ease, transform 0.3s ease;
         }
@@ -220,10 +223,9 @@
 
         .input-status-bar {
             width: 100%;
-            height: 4px;
-            margin: 0 0 6px 0;
-            background: #e3eaf3;
-            border-radius: 2px;
+            height: 3px;
+            margin: 0;
+            background: transparent;
             overflow: hidden;
             position: relative;
             transition: background 0.2s;
@@ -234,11 +236,11 @@
             height: 100%;
             width: 0%;
             background-color: #2196f3;
-            border-radius: 2px;
             transition: width 0.2s linear;
             position: absolute;
             left: 0;
             top: 0;
+            box-shadow: 0 0 3px rgba(33, 150, 243, 0.4);
         }
         
 
@@ -253,6 +255,12 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
             backface-visibility: hidden;
+        }
+        
+        .input-area textarea::placeholder {
+            color: #999;
+            font-family: 'Supreme', sans-serif;
+            font-weight: 200;
         }
         
         .input-area textarea:focus {
@@ -273,41 +281,16 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.2s, transform 0.2s;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
         }
+        
+        /* Send button glow animation removed */
 
-        .circular-loader {
-            width: 54px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 2;
-        }
-        .circular-loader svg {
-            width: 54px;
-            height: 54px;
-            display: block;
-        }
-        .circular-loader .circle-bg {
-            stroke: #e3eaf3;
-        }
-        .circular-loader .circle {
-            stroke: #2196f3;
-            stroke-width: 3.5;
-            stroke-linecap: round;
-            fill: none;
-            stroke-dasharray: 157;
-            stroke-dashoffset: 157;
-            transition: stroke-dashoffset 0.3s linear;
-        }
+        /* Circular loader removed */
         
         button {
             padding: 10px 20px;
@@ -356,23 +339,7 @@
             font-style: italic;
         }
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #2196f3;
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        /* Loading spinner removed */
 
         .typing-indicator {
             position: relative;
@@ -489,54 +456,86 @@
 
         /* API key status dot animation */
         #api-key-dot {
-            transition: background 0.3s ease, box-shadow 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+            position: relative;
         }
 
         #api-key-dot.loading {
-            background: conic-gradient(#2563eb 0% 30%, #60a5fa 30% 60%, #e0edff 60% 100%);
-            animation: spin-dot 0.8s linear infinite;
-            box-shadow: 0 0 6px rgba(96, 165, 250, 0.5);
+            background-color: #aaa;
+            animation: pulse-dot-loading 1.5s infinite ease-in-out;
+        }
+        
+        #api-key-dot.valid {
+            background-color: #2ecc40;
+            animation: none;
+            box-shadow: 0 0 6px rgba(46, 204, 64, 0.4);
+        }
+        
+        #api-key-dot.valid::before,
+        #api-key-dot.valid::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: rgba(46, 204, 64, 0.4);
+            transform: translate(-50%, -50%) scale(1);
+            z-index: -1;
+            animation: radar-pulse 2.5s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
+            opacity: 0.7;
+        }
+        
+        #api-key-dot.valid::after {
+            animation-delay: 1.25s;
         }
 
-        @keyframes spin-dot {
-            100% { transform: rotate(360deg); }
+        @keyframes pulse-dot-loading {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.5; }
+        }
+        
+        @keyframes radar-pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
         }
 
-        /* Responsive styles for mobile */
-        @media (max-width: 768px) {
-            .api-key-container {
-                padding: 8px 10px;
-                gap: 6px;
+        /* Responsive styles for mobile */            @media (max-width: 768px) {
+                .api-key-container {
+                    padding: 8px 10px;
+                    gap: 6px;
+                }
+                
+                .api-key-container input {
+                    min-width: 140px;
+                }
+                
+                .help-icon {
+                    width: 16px;
+                    height: 16px;
+                    font-size: 10px;
+                }
+                
+                .message {
+                    max-width: 90%;
+                }
+                
+                .chat-container {
+                    padding: 15px 10px;
+                }
+                
+                .input-area {
+                    padding: 15px 0;
+                    width: 100%;
+                }
+                
+                .input-status-bar {
+                    width: 100%;
+                    height: 3px;
+                }
             }
-            
-            .api-key-container input {
-                min-width: 140px;
-            }
-            
-            .help-icon {
-                width: 16px;
-                height: 16px;
-                font-size: 10px;
-            }
-            
-            .message {
-                max-width: 90%;
-            }
-            
-            .chat-container {
-                padding: 15px 10px;
-            }
-            
-            .input-area {
-                padding: 15px 0;
-                width: 100%;
-            }
-            
-            .input-status-bar {
-                width: 100%;
-                margin: 0 0 6px 0;
-            }
-        }
 
         /* Simple progress bar below the chat input - hidden but kept for future use */
         .progress-container {
@@ -573,11 +572,11 @@
     </div>
 
     <div id="chat-container" class="chat-container" style="margin-top:8px; height: calc(100vh - 60px); display: flex; flex-direction: column;">
+        <div class="input-status-bar" id="input-status-bar" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 100;">
+            <div class="input-status-bar-progress" id="input-status-bar-progress"></div>
+        </div>
         <div class="messages" id="llm-messages" style="flex-grow: 1; overflow-y: auto;">
             <!-- Welcome message removed -->
-        </div>
-        <div class="input-status-bar" id="input-status-bar" style="width:100%;">
-            <div class="input-status-bar-progress" id="input-status-bar-progress"></div>
         </div>
         <div class="input-area">
             <textarea id="llm-user-input" placeholder="Design with words..."></textarea>
@@ -637,7 +636,13 @@
 
             function setApiKeyStatus(color) {
                 apiKeyDot.classList.remove('loading'); // Remove loading animation
+                apiKeyDot.classList.remove('valid'); // Remove valid class
                 apiKeyDot.style.background = color;
+                
+                // Add 'valid' class when the color is green (valid API key)
+                if (color === '#2ecc40') {
+                    apiKeyDot.classList.add('valid');
+                }
             }
 
             // Set initial state (gray dot)
@@ -649,8 +654,9 @@
             let lastApiKey = '';
             let helloSentForKey = {};
             
-            // Disable the chat input until a valid API key is provided
+            // Disable the chat input and send button until a valid API key is provided
             document.getElementById('llm-user-input').disabled = true;
+            document.getElementById('llm-send-button').disabled = true;
             
             // Function to mask API key with asterisks
             function maskApiKey() {
@@ -715,7 +721,10 @@
                                     // Only set as valid if we get a real message back
                                     if (helloData && helloData.message) {
                                         setApiKeyStatus('#2ecc40');
-                                        // Keep as password type
+                                        apiKeyValid = true;
+                                        // Enable the send button when API key is valid
+                                        llmSendButton.disabled = false;
+                                        document.getElementById('llm-user-input').disabled = false;
                                         apiKeyValid = true;
                                         llmSendButton.disabled = false;
                                         // Enable the chat input field now that we have a valid API key
@@ -908,6 +917,7 @@
                 // Show status bar progress
                 const statusBar = document.getElementById('input-status-bar');
                 const statusBarProgress = document.getElementById('input-status-bar-progress');
+                statusBar.style.background = '#f5f5f5'; // Light gray background for the status bar
                 statusBarProgress.style.transition = 'none';
                 statusBarProgress.style.width = '0%';
                 void statusBarProgress.offsetWidth;
@@ -931,20 +941,12 @@
                 llmSendButton.disabled = true;
                 llmUserInput.disabled = true;
                 
-                // Add typing indicator - now a pulsing circle with improved positioning
-                const typingIndicator = document.createElement('div');
-                typingIndicator.className = 'typing-indicator';
-                typingIndicator.innerHTML = '<span></span>';
-                
-                // Create a wrapper to ensure consistent spacing
+                // Add only a spacing wrapper (no typing indicator animation)
                 const indicatorWrapper = document.createElement('div');
                 indicatorWrapper.style.minHeight = '30px';
                 indicatorWrapper.style.position = 'relative';
-                indicatorWrapper.appendChild(typingIndicator);
-                
                 llmMessagesContainer.appendChild(indicatorWrapper);
-                
-                // Ensure smooth scrolling to the typing indicator
+                // Ensure smooth scrolling to the spacing wrapper
                 setTimeout(() => {
                     llmMessagesContainer.scrollTo({
                         top: llmMessagesContainer.scrollHeight,
@@ -964,204 +966,13 @@
                     }
                 const data = await response.json();
                 
-                // Get the typing indicator and its wrapper for a fluid transition
-                const typingIndicator = llmMessagesContainer.querySelector('.typing-indicator');
-                const typingIndicatorWrapper = typingIndicator ? typingIndicator.parentNode : null;
-                
                 // Always show the LLM's message field (for both code and non-code responses)
                 if (data.message) {
-                    // Create the message div that will contain the text
-                    const messageDiv = document.createElement('div');
-                    messageDiv.classList.add('message', 'assistant');
-                    messageDiv.style.opacity = '0';
-                    
-                    // Get the position of the typing indicator for a seamless transition
-                    const indicatorRect = typingIndicator ? typingIndicator.getBoundingClientRect() : null;
-                    const containerRect = llmMessagesContainer.getBoundingClientRect();
-                    
-                    // Create a placeholder to maintain scrolling position
-                    const placeholderDiv = document.createElement('div');
-                    placeholderDiv.style.height = typingIndicatorWrapper ? `${typingIndicatorWrapper.offsetHeight}px` : '30px';
-                    placeholderDiv.style.opacity = '0';
-                    placeholderDiv.style.pointerEvents = 'none';
-                    
-                    // Position the message div at the typing indicator's location
-                    if (indicatorRect && typingIndicatorWrapper) {
-                        messageDiv.style.position = 'absolute';
-                        messageDiv.style.left = '24px'; // Match the typing indicator margin-left
-                        messageDiv.style.top = (indicatorRect.top - containerRect.top) + 'px';
-                        messageDiv.style.paddingLeft = '24px'; // Match horizontal padding of oval shape
-                        messageDiv.style.background = 'none';
-                        messageDiv.style.minHeight = `${typingIndicatorWrapper.offsetHeight}px`;
-                        messageDiv.style.margin = '15px 0 0 0';
-                        messageDiv.style.borderRadius = '24px';
-                        
-                        // Add placeholder where typing indicator was to prevent content jumping
-                        llmMessagesContainer.insertBefore(placeholderDiv, typingIndicatorWrapper);
+                    // Remove the indicatorWrapper (spacing) after response
+                    if (indicatorWrapper.parentNode === llmMessagesContainer) {
+                        llmMessagesContainer.removeChild(indicatorWrapper);
                     }
-                    
-                    // Append the message div
-                    llmMessagesContainer.appendChild(messageDiv);
-                    
-                    // Add a minimal delay to start the transition
-                    setTimeout(() => {
-                        // Fade out typing indicator gradually as text appears
-                        if (typingIndicator && typingIndicatorWrapper) {
-                            typingIndicator.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                            typingIndicator.style.opacity = '0';
-                            typingIndicator.style.transform = 'scale(0.5)';
-                            
-                            // Remove only after text starts appearing
-                            setTimeout(() => {
-                                // Remove the wrapper containing the typing indicator
-                                if (typingIndicatorWrapper.parentNode === llmMessagesContainer) {
-                                    llmMessagesContainer.removeChild(typingIndicatorWrapper);
-                                }
-                                
-                                // Remove placeholder after transition is complete with a smoother animation
-                                if (placeholderDiv.parentNode) {
-                                    // Save the current scroll position
-                                    const scrollPos = llmMessagesContainer.scrollTop;
-                                    
-                                    placeholderDiv.style.transition = 'height 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)';
-                                    placeholderDiv.style.height = '0';
-                                    
-                                    // Restore scroll position to prevent jumping during removal
-                                    llmMessagesContainer.scrollTop = scrollPos;
-                                    
-                                    setTimeout(() => {
-                                        if (placeholderDiv.parentNode) {
-                                            placeholderDiv.parentNode.removeChild(placeholderDiv);
-                                            
-                                            // Final scroll position adjustment after all transitions
-                                            llmMessagesContainer.scrollTo({
-                                                top: llmMessagesContainer.scrollHeight,
-                                                behavior: 'smooth'
-                                            });
-                                        }
-                                    }, 400);
-                                }
-                            }, 600);
-                        }
-                        
-                        // Start the text animation
-                        const formattedContent = formatMessageContent(data.message);
-                        let tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = formattedContent;
-                        
-                        // Prepare for animation with improved timing function
-                        messageDiv.style.transition = 'all 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
-                        messageDiv.style.opacity = '1';
-                        
-                        // After first few characters appear, transition to normal message position
-                        setTimeout(() => {
-                            // Save the scroll position before changing layout
-                            const scrollPos = llmMessagesContainer.scrollTop;
-                            
-                            messageDiv.style.position = 'relative';
-                            messageDiv.style.top = 'auto';
-                            messageDiv.style.left = 'auto';
-                            messageDiv.style.padding = '12px 24px';
-                            messageDiv.style.background = '#ffffff';
-                            messageDiv.style.borderRadius = '24px';
-                            
-                            // Restore scroll position to prevent jumping
-                            llmMessagesContainer.scrollTop = scrollPos;
-                        }, 400);
-                        
-                        // Handle code blocks and regular text for animation with smoother scrolling
-                        const nodes = Array.from(tempDiv.childNodes);
-                        let charIndex = 0;
-                        let currentNode = 0;
-                        
-                        // For smoother animation, pre-calculate approximate height
-                        const textLength = data.message.length;
-                        const estimatedLineCount = Math.ceil(textLength / 80); // Rough estimate of chars per line
-                        const estimatedHeight = Math.max(50, estimatedLineCount * 24); // Approximate height in pixels
-                        
-                        // Pre-size the message div to prevent shifting
-                        if (!messageDiv.style.minHeight) {
-                            messageDiv.style.minHeight = `${Math.min(200, estimatedHeight)}px`;
-                        }
-                        
-                        function processNode(node, parentElement) {
-                            // Enhanced process function for smoother animations
-                            if (node.nodeType === Node.TEXT_NODE) {
-                                const text = node.textContent;
-                                const textHolder = document.createTextNode('');
-                                parentElement.appendChild(textHolder);
-                                
-                                // Maintain a consistent scroll position during animation
-                                let lastScrollUpdate = 0;
-                                
-                                function animateText(index) {
-                                    if (index < text.length) {
-                                        textHolder.textContent += text[index];
-                                        
-                                        // Throttle scroll updates for performance
-                                        const now = Date.now();
-                                        if (now - lastScrollUpdate > 100) {
-                                            lastScrollUpdate = now;
-                                            // Smooth scroll only when near bottom
-                                            const isNearBottom = llmMessagesContainer.scrollHeight - llmMessagesContainer.scrollTop - llmMessagesContainer.clientHeight < 50;
-                                            if (isNearBottom) {
-                                                llmMessagesContainer.scrollTo({
-                                                    top: llmMessagesContainer.scrollHeight,
-                                                    behavior: 'smooth'
-                                                });
-                                            }
-                                        }
-                                        
-                                        // Variable speed based on character type for more natural typing
-                                        let delay = 5;
-                                        if ('.!?:;'.includes(text[index])) delay = 30; // Pause longer at punctuation
-                                        else if (text[index] === ' ') delay = 15; // Slight pause at spaces
-                                        else delay = 5 + Math.random() * 5; // Normal characters
-                                        
-                                        setTimeout(() => animateText(index + 1), delay);
-                                    } else if (currentNode < nodes.length - 1) {
-                                        currentNode++;
-                                        processNode(nodes[currentNode], messageDiv);
-                                    }
-                                }
-                                
-                                if (charIndex === 0) {
-                                    animateText(0);
-                                }
-                                charIndex++;
-                                
-                            } else if (node.nodeType === Node.ELEMENT_NODE) {
-                                if (node.tagName === 'PRE') {
-                                    const clone = node.cloneNode(true);
-                                    clone.style.opacity = '0';
-                                    parentElement.appendChild(clone);
-                                    
-                                    setTimeout(() => {
-                                        clone.style.transition = 'opacity 0.8s ease';
-                                        clone.style.opacity = '1';
-                                    }, 100);
-                                    
-                                    if (currentNode < nodes.length - 1) {
-                                        currentNode++;
-                                        setTimeout(() => {
-                                            processNode(nodes[currentNode], messageDiv);
-                                        }, 300);
-                                    }
-                                } else {
-                                    const clone = node.cloneNode(false);
-                                    parentElement.appendChild(clone);
-                                    
-                                    for (const child of node.childNodes) {
-                                        processNode(child, clone);
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if (nodes.length > 0) {
-                            processNode(nodes[0], messageDiv);
-                        }
-                    }, 200);
+                    addMessageToUI(llmMessagesContainer, 'assistant', data.message);
                 } else {
                     // fallback for legacy/edge cases
                     let code = data.code || '';
@@ -1178,11 +989,11 @@
                         data.blenderResult?.output ||
                         data.result ||
                         '[No response from Blender]';
-                    
-                    // Add a small delay for better UX
-                    setTimeout(() => {
-                        addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
-                    }, 400);
+                    // Remove the indicatorWrapper (spacing) after response
+                    if (indicatorWrapper.parentNode === llmMessagesContainer) {
+                        llmMessagesContainer.removeChild(indicatorWrapper);
+                    }
+                    addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
                 }
                 // No status text for minimal UI
                 } catch (error) {
@@ -1192,6 +1003,7 @@
                     finished = true;
                     statusBarProgress.style.width = '100%';
                     setTimeout(() => {
+                        statusBar.style.background = 'transparent';
                         statusBarProgress.style.transition = 'none';
                         statusBarProgress.style.width = '0%';
                         setTimeout(() => { statusBarProgress.style.transition = 'width 0.3s linear'; }, 50);
@@ -1209,6 +1021,18 @@
                     sendLLMMessage();
                 }
             });
+            
+            // Update the setApiKeyStatus function to handle the dot valid state
+            const originalSetApiKeyStatus = setApiKeyStatus;
+            setApiKeyStatus = function(color) {
+                originalSetApiKeyStatus(color);
+                // Add 'valid' class when API key is valid (green)
+                if (color === '#2ecc40') {
+                    apiKeyDot.classList.add('valid');
+                } else {
+                    apiKeyDot.classList.remove('valid');
+                }
+            };
         });
     </script>
 </body>
