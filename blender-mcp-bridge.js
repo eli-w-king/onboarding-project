@@ -1,3 +1,4 @@
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const net = require('net');
@@ -5,6 +6,10 @@ const path = require('path');
 
 const app = express();
 const PORT = 3001; // The port your web frontend will call
+
+// Integrate API key update router
+const apiKeyRouter = require('./api-key-routes.js');
+app.use(apiKeyRouter);
 
 // Serve the static HTML UI at /
 app.get('/', (req, res) => {
