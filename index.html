@@ -3,8 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenRouter Chat</title>
+    <title>Planeshape</title>
     <style>
+        /* Site Header Styling */
+        .site-header {
+            padding: 15px 0;
+            text-align: center;
+        }
+        
+        .site-header h1 {
+            margin: 0;
+            font-weight: 400;
+            color: #333;
+            font-size: 24px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Blue pulsing dot typing indicator for chat */
+        .typing-dot-indicator {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #2196f3;
+            margin-left: 24px;
+            box-shadow: 0 0 6px rgba(33,150,243,0.25);
+            animation: typing-dot-pulse 1.2s infinite cubic-bezier(0.25,0.1,0.25,1);
+            position: absolute;
+            left: 0;
+            top: 5px;
+        }
+        @keyframes typing-dot-pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+        /* Blue pulsing dot typing indicator for chat - more ambient version */
+        .typing-dot-indicator {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: rgba(33, 150, 243, 0.6);
+            margin-left: 24px;
+            box-shadow: 0 0 8px rgba(33, 150, 243, 0.2);
+            animation: typing-dot-pulse 2s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            position: absolute;
+            left: 0;
+            top: 5px;
+        }
+        @keyframes typing-dot-pulse {
+            0% { transform: scale(0.85); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(0.85); opacity: 0.5; }
+        }
         @font-face {
             font-family: 'Supreme';
             src: url('Supreme-font-WEB/fonts/Supreme-Regular.woff2') format('woff2'),
@@ -169,12 +221,10 @@
             max-width: 85%;
             word-break: break-word;
             line-height: 1.6;
-            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
             animation: messageFadeIn 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
             opacity: 0;
-            will-change: opacity, transform;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
+            will-change: opacity;
             /* Prevent layout shifts and improve rendering performance */
             contain: layout style;
             min-height: 56px;
@@ -183,8 +233,8 @@
         }
 
         @keyframes messageFadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .user {
@@ -193,7 +243,6 @@
             border-radius: 48px;
             border: 1px solid #f0f0f0;
             animation-delay: 0.1s;
-            transform-origin: bottom right;
             /* Prevent jumping by ensuring consistent dimensions */
             min-height: 56px;
         }
@@ -204,11 +253,10 @@
             border-radius: 48px;
             border: none;
             animation-delay: 0.3s;
-            transform-origin: bottom left;
             /* Prevent jumping by ensuring consistent dimensions */
             min-height: 56px;
             /* Smooth fade-in/out for background color changes */
-            transition: background-color 0.4s ease, transform 0.3s ease;
+            transition: background-color 0.4s ease;
         }
 
         .input-area {
@@ -224,7 +272,7 @@
         .input-status-bar {
             width: 100%;
             height: 3px;
-            margin: 0;
+            margin: 0 0 8px 0;
             background: transparent;
             overflow: hidden;
             position: relative;
@@ -235,12 +283,12 @@
         .input-status-bar-progress {
             height: 100%;
             width: 0%;
-            background-color: #2196f3;
+            background-color: rgba(33, 150, 243, 0.4);
             transition: width 0.2s linear;
             position: absolute;
             left: 0;
             top: 0;
-            box-shadow: 0 0 3px rgba(33, 150, 243, 0.4);
+            box-shadow: 0 0 3px rgba(33, 150, 243, 0.2);
         }
         
 
@@ -503,6 +551,14 @@
         }
 
         /* Responsive styles for mobile */            @media (max-width: 768px) {
+                .site-header {
+                    padding: 10px 0;
+                }
+                
+                .site-header h1 {
+                    font-size: 20px;
+                }
+                
                 .api-key-container {
                     padding: 8px 10px;
                     gap: 6px;
@@ -524,6 +580,7 @@
                 
                 .chat-container {
                     padding: 15px 10px;
+                    height: calc(100vh - 90px);
                 }
                 
                 .input-area {
@@ -533,7 +590,7 @@
                 
                 .input-status-bar {
                     width: 100%;
-                    height: 3px;
+                    height: 2px;
                 }
             }
 
@@ -564,6 +621,11 @@
     </style>
 </head>
 <body>
+    <!-- Site Header -->
+    <div class="site-header">
+        <h1>Plainshape</h1>
+    </div>
+
     <!-- API Key Update UI -->
     <div class="api-key-container">
         <input type="text" id="api-key-input" placeholder="Enter OpenRouter API key" autocomplete="off" />
@@ -571,12 +633,12 @@
         <a href="https://openrouter.ai/docs/faq" target="_blank" class="api-key-link" title="How to get a key" style="display:flex;align-items:center;margin:0 0 0 8px;text-decoration:none;"><span class="help-icon" style="display:inline-flex;justify-content:center;align-items:center;width:15px;height:15px;font-size:11px;border-radius:50%;background:#e9e9e9;color:#555;box-shadow:0 1px 2px rgba(0,0,0,0.04);font-weight:500;letter-spacing:0.2px;text-decoration:none;">?</span></a>
     </div>
 
-    <div id="chat-container" class="chat-container" style="margin-top:8px; height: calc(100vh - 60px); display: flex; flex-direction: column;">
-        <div class="input-status-bar" id="input-status-bar" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 100;">
-            <div class="input-status-bar-progress" id="input-status-bar-progress"></div>
-        </div>
+    <div id="chat-container" class="chat-container" style="margin-top:8px; height: calc(100vh - 100px); display: flex; flex-direction: column;">
         <div class="messages" id="llm-messages" style="flex-grow: 1; overflow-y: auto;">
             <!-- Welcome message removed -->
+        </div>
+        <div class="input-status-bar" id="input-status-bar" style="position: relative; width: 100%;">
+            <div class="input-status-bar-progress" id="input-status-bar-progress"></div>
         </div>
         <div class="input-area">
             <textarea id="llm-user-input" placeholder="Design with words..."></textarea>
@@ -841,13 +903,16 @@
                         currentNode++;
                         processNode(nodes[currentNode], messageDiv);
                     }
-                    // Scroll as text appears
-                    container.scrollTop = container.scrollHeight;
+                    // No scrolling here to prevent text from "moving up"
                 }
                 
                 if (charIndex === 0) {
                     // Start the animation for the first node
                     animateText(0);
+                    // Do a single scroll to bottom at the beginning
+                    setTimeout(() => {
+                        container.scrollTop = container.scrollHeight;
+                    }, 0);
                 }
                 charIndex++;
                 
@@ -894,12 +959,17 @@
         // For user messages, no animation needed
         messageDiv.innerHTML = formatMessageContent(content);
         container.appendChild(messageDiv);
+        
+        // Scroll to bottom after adding user message
+        setTimeout(() => {
+            container.scrollTop = container.scrollHeight;
+        }, 0);
     }
     
-    // Always scroll to bottom
+    // Wait until all content is fully displayed before final scroll
     setTimeout(() => {
         container.scrollTop = container.scrollHeight;
-    }, 0);
+    }, 500);
             }
 
             // LLM agent chat logic
@@ -917,7 +987,7 @@
                 // Show status bar progress
                 const statusBar = document.getElementById('input-status-bar');
                 const statusBarProgress = document.getElementById('input-status-bar-progress');
-                statusBar.style.background = '#f5f5f5'; // Light gray background for the status bar
+                statusBar.style.background = 'rgba(245, 245, 245, 0.5)'; // Very light gray background with transparency
                 statusBarProgress.style.transition = 'none';
                 statusBarProgress.style.width = '0%';
                 void statusBarProgress.offsetWidth;
@@ -945,14 +1015,21 @@
                 const indicatorWrapper = document.createElement('div');
                 indicatorWrapper.style.minHeight = '30px';
                 indicatorWrapper.style.position = 'relative';
+                // Add blue pulsing dot typing indicator
+                const typingDot = document.createElement('span');
+                typingDot.className = 'typing-dot-indicator';
+                typingDot.style.opacity = '0';
+                typingDot.style.transition = 'opacity 0.6s cubic-bezier(0.45,0.05,0.55,0.95)';
+                indicatorWrapper.appendChild(typingDot);
                 llmMessagesContainer.appendChild(indicatorWrapper);
                 // Ensure smooth scrolling to the spacing wrapper
                 setTimeout(() => {
+                    typingDot.style.opacity = '0.7';
                     llmMessagesContainer.scrollTo({
                         top: llmMessagesContainer.scrollHeight,
                         behavior: 'smooth'
                     });
-                }, 50);
+                }, 100);
                 
                 try {
                     const response = await fetch('http://localhost:3002/llm-agent', {
@@ -969,10 +1046,14 @@
                 // Always show the LLM's message field (for both code and non-code responses)
                 if (data.message) {
                     // Remove the indicatorWrapper (spacing) after response
+                    // Fade out typing dot before removing wrapper
+                    typingDot.style.opacity = '0';
+                    setTimeout(() => {
                     if (indicatorWrapper.parentNode === llmMessagesContainer) {
                         llmMessagesContainer.removeChild(indicatorWrapper);
                     }
                     addMessageToUI(llmMessagesContainer, 'assistant', data.message);
+                    }, 450);
                 } else {
                     // fallback for legacy/edge cases
                     let code = data.code || '';
@@ -990,10 +1071,14 @@
                         data.result ||
                         '[No response from Blender]';
                     // Remove the indicatorWrapper (spacing) after response
+                    // Fade out typing dot before removing wrapper
+                    typingDot.style.opacity = '0';
+                    setTimeout(() => {
                     if (indicatorWrapper.parentNode === llmMessagesContainer) {
                         llmMessagesContainer.removeChild(indicatorWrapper);
                     }
                     addMessageToUI(llmMessagesContainer, 'assistant', blenderResult);
+                    }, 450);
                 }
                 // No status text for minimal UI
                 } catch (error) {
@@ -1010,7 +1095,7 @@
                         llmSendButton.disabled = false;
                         llmUserInput.disabled = false;
                         llmUserInput.focus();
-                    }, 400);
+                    }, 600);
                 }
             }
 
