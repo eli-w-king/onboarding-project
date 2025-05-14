@@ -1,5 +1,6 @@
 #!/bin/bash
 # /Users/elijahking/Library/CloudStorage/OneDrive-Microsoft/Documents/GitHub/onboarding-project/run_all_bridges_and_logs.sh
+# open 3001
 # Run all bridge services and tail their logs in one terminal
 
 set -e

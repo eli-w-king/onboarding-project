@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Blender MCP Interface</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧊</text></svg>">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+        
+        .api-key-section {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-key-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            background-color: #e74c3c;
+        }
+
+        .connected {
+            background-color: #2ecc71;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        #editor-container {
+            display: flex;
+            gap: 20px;
+            flex-grow: 1;
+            min-height: 300px;
+            margin-bottom: 20px;
+        }
+
+        #code-editor, #result-display {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .editor-header, .result-header {
+            background-color: #f5f5f5;
+            padding: 10px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #code-textarea, #result-textarea {
+            flex-grow: 1;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            resize: none;
+            border: none;
+            outline: none;
+            overflow: auto;
+        }
+
+        #result-textarea {
+            background-color: #f8f8f8;
+        }
+
+        .example-selector {
+            margin-left: 10px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .bridge-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .bridge-status p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Azure Blender MCP Interface</h1>
+    
+    <div class="container">
+        <div class="status">
+            <div>
+                <span class="status-indicator" id="server-status"></span>
+                <span id="status-text">Checking connection...</span>
+            </div>
+            
+            <button id="refresh-status-button">Refresh Status</button>
+        </div>
+        
+        <div class="api-key-section">
+            <label for="api-key">API Key:</label>
+            <input 
+                type="text" 
+                id="api-key" 
+                class="api-key-input" 
+                placeholder="Enter your API key"
+                value="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">
+            <button id="save-key-button">Save Key</button>
+        </div>
+        
+        <div class="bridge-status">
+            <p>Local Bridge Status: <span id="bridge-status">Unknown</span></p>
+            <p>Connection ID: <span id="connection-id">None</span></p>
+        </div>
+        
+        <div id="editor-container">
+            <div id="code-editor">
+                <div class="editor-header">
+                    Blender Python Code
+                    <select id="example-selector" class="example-selector">
+                        <option value="">Select Example</option>
+                        <option value="cube">Create Cube</option>
+                        <option value="scene-info">Get Scene Info</option>
+                        <option value="material">Create Material</option>
+                    </select>
+                </div>
+                <textarea id="code-textarea" placeholder="Enter your Python code for Blender here..."></textarea>
+            </div>
+            
+            <div id="result-display">
+                <div class="result-header">Result</div>
+                <textarea id="result-textarea" placeholder="Results will appear here..." readonly></textarea>
+            </div>
+        </div>
+        
+        <div>
+            <button id="execute-button">Execute Code</button>
+            <button id="get-scene-info-button">Get Scene Info</button>
+            <button id="clear-button">Clear</button>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const serverStatus = document.getElementById('server-status');
+        const statusText = document.getElementById('status-text');
+        const refreshStatusButton = document.getElementById('refresh-status-button');
+        const apiKeyInput = document.getElementById('api-key');
+        const saveKeyButton = document.getElementById('save-key-button');
+        const codeTextarea = document.getElementById('code-textarea');
+        const resultTextarea = document.getElementById('result-textarea');
+        const executeButton = document.getElementById('execute-button');
+        const getSceneInfoButton = document.getElementById('get-scene-info-button');
+        const clearButton = document.getElementById('clear-button');
+        const exampleSelector = document.getElementById('example-selector');
+        const bridgeStatusEl = document.getElementById('bridge-status');
+        const connectionIdEl = document.getElementById('connection-id');
+
+        // Azure App Service URL - Change this to your actual Azure App Service URL when deployed
+        const serverUrl = 'https://your-app-name.azurewebsites.net';
+        
+        // Connection status
+        let serverConnected = false;
+        let bridgeConnected = false;
+        let connectionId = null;
+        
+        // Example code snippets
+        const examples = {
+            'cube': `import bpy
+
+# Clear existing objects
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete()
+
+# Create a new cube
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))
+cube = bpy.context.active_object
+cube.name = "MyCube"
+
+# Add a material
+mat = bpy.data.materials.new(name="CubeMaterial")
+mat.diffuse_color = (0.8, 0.2, 0.2, 1.0)
+cube.data.materials.append(mat)
+
+print("Cube created successfully!")`,
+
+            'scene-info': `import bpy
+
+# Get scene information
+scene = bpy.context.scene
+objects = bpy.data.objects
+
+result = {
+    "scene_name": scene.name,
+    "objects": [obj.name for obj in objects],
+    "cameras": [obj.name for obj in objects if obj.type == 'CAMERA'],
+    "materials": [mat.name for mat in bpy.data.materials],
+    "render_engine": scene.render.engine,
+}
+
+print(result)`,
+
+            'material': `import bpy
+import random
+
+# Create a new material
+mat_name = f"Material_{random.randint(1000, 9999)}"
+mat = bpy.data.materials.new(name=mat_name)
+
+# Enable nodes
+mat.use_nodes = True
+nodes = mat.node_tree.nodes
+
+# Clear existing nodes
+for node in nodes:
+    nodes.remove(node)
+    
+# Create a principled BSDF node
+shader = nodes.new('ShaderNodeBsdfPrincipled')
+shader.location = (0, 0)
+shader.inputs['Base Color'].default_value = (
+    random.uniform(0, 1),
+    random.uniform(0, 1),
+    random.uniform(0, 1),
+    1.0
+)
+shader.inputs['Metallic'].default_value = random.uniform(0, 1)
+shader.inputs['Roughness'].default_value = random.uniform(0, 1)
+shader.inputs['Specular'].default_value = random.uniform(0, 1)
+
+# Create an output node
+output = nodes.new('ShaderNodeOutputMaterial')
+output.location = (300, 0)
+
+# Link the nodes
+links = mat.node_tree.links
+links.new(shader.outputs['BSDF'], output.inputs['Surface'])
+
+print(f"Created material: {mat_name}")
+
+# Try to assign material to selected object
+obj = bpy.context.active_object
+if obj and obj.type == 'MESH':
+    if len(obj.data.materials) > 0:
+        obj.data.materials[0] = mat
+    else:
+        obj.data.materials.append(mat)
+    print(f"Applied material to {obj.name}")
+else:
+    print("No mesh object selected to apply material")`
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkServerStatus();
+            await loadApiKey();
+            await checkBridgeStatus();
+        });
+        
+        // Check server status
+        async function checkServerStatus() {
+            try {
+                // First try the API key endpoint as a basic connectivity check
+                const response = await fetch(`${serverUrl}/api/get-api-key`, {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    serverConnected = true;
+                    serverStatus.classList.add('connected');
+                    statusText.textContent = 'Connected to Azure MCP Server';
+                } else {
+                    serverConnected = false;
+                    serverStatus.classList.remove('connected');
+                    statusText.textContent = 'Server error: ' + response.statusText;
+                }
+            } catch (err) {
+                console.error('Server connection error:', err);
+                serverConnected = false;
+                serverStatus.classList.remove('connected');
+                statusText.textContent = 'Cannot connect to server';
+            }
+            
+            // Update UI based on connection status
+            updateButtonState();
+        }
+        
+        // Check local bridge status
+        async function checkBridgeStatus() {
+            try {
+                // This endpoint would check if any bridges are currently connected
+                const response = await fetch(`${serverUrl}/scene-info`, {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        bridgeConnected = true;
+                        bridgeStatusEl.textContent = 'Connected';
+                        bridgeStatusEl.style.color = '#2ecc71';
+                        
+                        // Try to extract connection id if available
+                        if (data.connectionId) {
+                            connectionId = data.connectionId;
+                            connectionIdEl.textContent = connectionId;
+                        }
+                    } else {
+                        bridgeConnected = false;
+                        bridgeStatusEl.textContent = 'Disconnected';
+                        bridgeStatusEl.style.color = '#e74c3c';
+                        connectionIdEl.textContent = 'None';
+                        
+                        // Show error message in result area
+                        resultTextarea.value = `Bridge not connected: ${data.error}`;
+                    }
+                } else {
+                    bridgeConnected = false;
+                    bridgeStatusEl.textContent = 'Error: ' + response.statusText;
+                    bridgeStatusEl.style.color = '#e74c3c';
+                }
+            } catch (err) {
+                console.error('Bridge status check error:', err);
+                bridgeConnected = false;
+                bridgeStatusEl.textContent = 'Error: Cannot check bridge status';
+                bridgeStatusEl.style.color = '#e74c3c';
+            }
+            
+            // Update UI based on bridge status
+            updateButtonState();
+        }
+        
+        // Load API key from server
+        async function loadApiKey() {
+            try {
+                const response = await fetch(`${serverUrl}/api/get-api-key`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.apiKey) {
+                        apiKeyInput.value = data.apiKey;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading API key:', err);
+            }
+        }
+        
+        // Save API key to server
+        async function saveApiKey() {
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!apiKey) {
+                alert('Please enter an API key');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${serverUrl}/api/update-api-key`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ apiKey })
+                });
+                
+                if (response.ok) {
+                    alert('API key saved successfully!');
+                } else {
+                    alert('Failed to save API key: ' + response.statusText);
+                }
+            } catch (err) {
+                console.error('Error saving API key:', err);
+                alert('Error saving API key: ' + err.message);
+            }
+        }
+        
+        // Execute code
+        async function executeCode() {
+            const code = codeTextarea.value.trim();
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!code) {
+                alert('Please enter some code to execute');
+                return;
+            }
+            
+            if (!serverConnected) {
+                alert('Not connected to server');
+                return;
+            }
+            
+            if (!bridgeConnected) {
+                alert('No local bridge connected. Please start the local bridge first.');
+                return;
+            }
+            
+            executeButton.disabled = true;
+            resultTextarea.value = 'Executing...';
+            
+            try {
+                const response = await fetch(`${serverUrl}/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code, apiKey })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultTextarea.value = JSON.stringify(data.result, null, 2);
+                } else {
+                    resultTextarea.value = 'Error: ' + data.error;
+                }
+            } catch (err) {
+                console.error('Error executing code:', err);
+                resultTextarea.value = 'Error: ' + err.message;
+            } finally {
+                executeButton.disabled = false;
+            }
+        }
+        
+        // Get scene info
+        async function getSceneInfo() {
+            if (!serverConnected) {
+                alert('Not connected to server');
+                return;
+            }
+            
+            if (!bridgeConnected) {
+                alert('No local bridge connected. Please start the local bridge first.');
+                return;
+            }
+            
+            getSceneInfoButton.disabled = true;
+            resultTextarea.value = 'Getting scene info...';
+            
+            try {
+                const response = await fetch(`${serverUrl}/scene-info`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultTextarea.value = JSON.stringify(data.result, null, 2);
+                } else {
+                    resultTextarea.value = 'Error: ' + data.error;
+                }
+            } catch (err) {
+                console.error('Error getting scene info:', err);
+                resultTextarea.value = 'Error: ' + err.message;
+            } finally {
+                getSceneInfoButton.disabled = false;
+            }
+        }
+        
+        // Clear code and result
+        function clearCode() {
+            codeTextarea.value = '';
+            resultTextarea.value = '';
+            exampleSelector.selectedIndex = 0;
+        }
+        
+        // Update button state based on connection status
+        function updateButtonState() {
+            const canExecute = serverConnected && bridgeConnected;
+            
+            executeButton.disabled = !canExecute;
+            getSceneInfoButton.disabled = !canExecute;
+            
+            if (!canExecute) {
+                if (!serverConnected) {
+                    executeButton.title = 'Not connected to server';
+                    getSceneInfoButton.title = 'Not connected to server';
+                } else if (!bridgeConnected) {
+                    executeButton.title = 'No local bridge connected';
+                    getSceneInfoButton.title = 'No local bridge connected';
+                }
+            } else {
+                executeButton.title = '';
+                getSceneInfoButton.title = '';
+            }
+        }
+        
+        // Event listeners
+        refreshStatusButton.addEventListener('click', async () => {
+            await checkServerStatus();
+            await checkBridgeStatus();
+        });
+        
+        saveKeyButton.addEventListener('click', saveApiKey);
+        
+        executeButton.addEventListener('click', executeCode);
+        
+        getSceneInfoButton.addEventListener('click', getSceneInfo);
+        
+        clearButton.addEventListener('click', clearCode);
+        
+        exampleSelector.addEventListener('change', () => {
+            const selected = exampleSelector.value;
+            if (selected && examples[selected]) {
+                codeTextarea.value = examples[selected];
+            }
+        });
+    </script>
+</body>
+</html>
