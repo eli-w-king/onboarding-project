@@ -16,8 +16,6 @@ This project is a local-first, privacy-friendly way to:
 - Describe what you want in plain English (for example: "create a red cube", "animate a water simulation", "make a bouncing ball")
 - See results in Blender instantly
 
-No cloud, no accounts, and no data leaves your machine while testing locally. You are in control.
-
 How does it work? When you type a request, a language model translates your natural language into Python code that Blender can understand and execute. You never have to see or write code yourself.
 
 ---
