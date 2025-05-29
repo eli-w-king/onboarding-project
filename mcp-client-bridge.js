@@ -82,7 +82,7 @@ app.post('/llm-agent', async (req, res) => {
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash-preview:thinking',
         messages,
-        max_tokens: 2048,
+        max_tokens: 4096, // Doubled from 2048 to 4096
         temperature: 0.2
       })
     });
